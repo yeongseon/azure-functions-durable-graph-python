@@ -47,7 +47,7 @@ dev = [
     "pytest",
     "pytest-asyncio>=0.23,<1",
     "pytest-cov",
-    "ruff==0.15.7",
+    "ruff==0.15.9",
     "requests",
     "types-requests",
 ]
