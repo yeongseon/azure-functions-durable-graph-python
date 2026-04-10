@@ -1,0 +1,179 @@
+# azure-functions-durable-graph — Full LLM Reference
+
+> Manifest-first graph runtime for Azure Functions with Durable Functions orchestration.
+
+## Package Info
+
+- PyPI: `pip install azure-functions-durable-graph`
+- Version: 0.1.0
+- Python: >=3.10, <3.15
+- License: MIT
+- Docs: https://yeongseon.github.io/azure-functions-durable-graph/
+- Repository: https://github.com/yeongseon/azure-functions-durable-graph
+- Azure Functions programming model: v2
+
+## Installation
+
+```bash
+pip install azure-functions-durable-graph
+```
+
+## Public API
+
+### Core Imports
+
+```python
+from azure_functions_durable_graph import (
+    DurableGraphApp,
+    GraphManifest,
+    GraphRegistration,
+    ManifestBuilder,
+    RouteAction,
+    RouteDecision,
+)
+```
+
+### ManifestBuilder
+
+```python
+class ManifestBuilder(Generic[StateModelT]):
+    def __init__(
+        self,
+        *,
+        graph_name: str,
+        state_model: type[StateModelT],
+        version: str = "0.1.0",
+        metadata: dict[str, Any] | None = None,
+    ) -> None: ...
+
+    def set_entrypoint(self, node_name: str) -> ManifestBuilder[StateModelT]: ...
+
+    def add_node(
+        self,
+        name: str,
+        handler: NodeHandler[StateModelT],
+        *,
+        next_node: str | None = None,
+        route: RouteHandler[StateModelT] | None = None,
+        terminal: bool = False,
+    ) -> ManifestBuilder[StateModelT]: ...
+
+    def add_event_handler(
+        self,
+        event_name: str,
+        handler: EventHandler[StateModelT],
+    ) -> ManifestBuilder[StateModelT]: ...
+
+    def build(self) -> GraphRegistration[StateModelT]: ...
+```
+
+### DurableGraphApp
+
+```python
+class DurableGraphApp:
+    def __init__(
+        self,
+        *,
+        auth_level: func.AuthLevel = func.AuthLevel.ANONYMOUS,
+    ) -> None: ...
+
+    def register_registration(self, registration: GraphRegistration[Any]) -> None: ...
+
+    # Exposed attribute after initialization
+    # function_app: func.FunctionApp
+```
+
+### GraphManifest
+
+```python
+class GraphManifest(BaseModel):
+    graph_name: str
+    version: str
+    graph_hash: str
+    state_model_name: str
+    entrypoint: str
+    nodes: dict[str, NodeDefinition]
+    event_handler_names: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+    def openapi_schema_fragment(self) -> dict[str, Any]: ...
+```
+
+### RouteDecision
+
+```python
+class RouteDecision(BaseModel):
+    action: RouteAction
+    next_node: str | None = None
+    event_name: str | None = None
+    resume_node: str | None = None
+    note: str | None = None
+
+    @classmethod
+    def next(cls, node_name: str) -> RouteDecision: ...
+
+    @classmethod
+    def complete(cls, note: str | None = None) -> RouteDecision: ...
+
+    @classmethod
+    def wait_for_event(
+        cls,
+        *,
+        event_name: str,
+        resume_node: str,
+        note: str | None = None,
+    ) -> RouteDecision: ...
+```
+
+### RouteAction
+
+```python
+class RouteAction(str, Enum):
+    NEXT = "next"
+    COMPLETE = "complete"
+    WAIT_FOR_EVENT = "wait_for_event"
+```
+
+## Common Patterns
+
+### 1. Sequential Graph Execution
+
+Use `next_node` chaining for deterministic step-by-step processing.
+
+### 2. Conditional Routing
+
+Return `RouteDecision.next("node_name")` from route handlers to branch dynamically.
+
+### 3. Human-in-the-Loop Flows
+
+Use `RouteDecision.wait_for_event(event_name=..., resume_node=...)` and send external events via runtime endpoint.
+
+### 4. Manifest-First Registration
+
+Build once (`ManifestBuilder.build()`), register once (`DurableGraphApp.register_registration()`), then serve HTTP endpoints from `runtime.function_app`.
+
+## Design Principles
+
+1. **Manifest-first**: Compile graph definitions into stable manifests with deterministic hashes
+2. **Deterministic orchestration**: Keep side-effectful logic in activities, not orchestrator code
+3. **Typed state**: Use Pydantic models for graph state contracts
+4. **Runtime ergonomics**: Auto-register HTTP endpoints for start/status/events/cancel/health
+5. **Version-aware deployment**: Pair graph version with hash for safe runtime resolution
+
+## Limitations
+
+1. **Alpha stability**: API surface is early-stage and may change between releases
+2. **Azure Functions v2 only**: Designed for decorator-based Python v2 programming model
+3. **Durable dependency**: Requires `azure-functions-durable` runtime integration
+4. **Pydantic v2 required**: State and contracts rely on Pydantic v2 behavior
+5. **Manifest reachability rules**: Build fails when nodes are unreachable from entrypoint
+
+## Ecosystem Integration
+
+Used with:
+- `azure-functions-openapi` — OpenAPI/Swagger docs for FunctionApp endpoints
+- `azure-functions-validation` — Validation and serialization for HTTP contracts
+- `azure-functions-logging` — Structured runtime observability
+
+Part of:
+- **Azure Functions Python DX Toolkit**

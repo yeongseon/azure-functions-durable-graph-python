@@ -1,0 +1,78 @@
+# azure-functions-durable-graph
+
+> Manifest-first graph runtime for Azure Functions with Durable Functions orchestration.
+
+## Package Info
+
+- PyPI: `pip install azure-functions-durable-graph`
+- Version: 0.1.0
+- Python: >=3.10, <3.15
+- License: MIT
+- Docs: https://yeongseon.github.io/azure-functions-durable-graph/
+- Repository: https://github.com/yeongseon/azure-functions-durable-graph
+
+## What It Does
+
+Declarative graph runtime for Azure Functions v2 with Durable Functions orchestration.
+Compiles graph definitions into stable manifests, auto-registers runtime HTTP endpoints,
+and keeps orchestrator logic deterministic by executing user handlers in activities.
+
+## Core API
+
+- `ManifestBuilder` — Build a graph manifest from nodes, routes, and events
+- `DurableGraphApp` — Runtime host for registration and HTTP/Durable endpoints
+- `GraphRegistration` — Runtime bundle (manifest + handlers + state model)
+- `GraphManifest` — Immutable graph descriptor with hash/version metadata
+- `RouteDecision` — Typed routing result (`next`, `complete`, `wait_for_event`)
+- `RouteAction` — Routing action enum for orchestrator transitions
+
+## Quick Start
+
+```python
+from pydantic import BaseModel
+
+from azure_functions_durable_graph import DurableGraphApp, ManifestBuilder, RouteDecision
+
+
+class MyState(BaseModel):
+    message: str
+    processed: bool = False
+
+
+def process_message(state: MyState) -> dict:
+    return {"processed": True}
+
+
+def finalize(state: MyState) -> dict:
+    return {"message": f"Done: {state.message}"}
+
+
+builder = ManifestBuilder(graph_name="my_graph", state_model=MyState)
+builder.set_entrypoint("process")
+builder.add_node("process", process_message, next_node="finalize")
+builder.add_node("finalize", finalize, terminal=True)
+
+registration = builder.build()
+
+runtime = DurableGraphApp()
+runtime.register_registration(registration)
+app = runtime.function_app
+```
+
+## Documentation
+
+- [Project Docs](https://yeongseon.github.io/azure-functions-durable-graph/)
+- [Repository README](https://github.com/yeongseon/azure-functions-durable-graph)
+- [Examples](https://github.com/yeongseon/azure-functions-durable-graph/tree/main/examples)
+
+## Ecosystem
+
+Part of **Azure Functions Python DX Toolkit**:
+- `azure-functions-openapi` — OpenAPI and Swagger UI
+- `azure-functions-validation` — Request/response validation
+- `azure-functions-db` — Database bindings
+- `azure-functions-langgraph` — LangGraph deployment adapter
+- `azure-functions-logging` — Structured logging
+- `azure-functions-scaffold` — Project scaffolding
+- `azure-functions-doctor` — Pre-deploy diagnostics
+- **azure-functions-durable-graph** — Manifest-first graph runtime
