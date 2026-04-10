@@ -84,6 +84,15 @@ precommit-install: ensure-hatch
 test: ensure-hatch
 	@echo "Running tests..."
 	@$(HATCH) run test
+.PHONY: test-unit
+test-unit: ensure-hatch
+	@echo "Running unit tests only..."
+	@$(HATCH) run test -m "not e2e"
+
+.PHONY: test-e2e
+test-e2e: ensure-hatch
+	@echo "Running e2e tests..."
+	@$(HATCH) run test -m "e2e"
 
 .PHONY: cov
 cov: ensure-hatch
