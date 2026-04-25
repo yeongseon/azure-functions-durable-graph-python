@@ -10,7 +10,7 @@ import pytest
 
 
 @pytest.fixture
-def e2e_base_url():
+def e2e_base_url() -> str:
     """Base URL for e2e tests. Set E2E_BASE_URL env var."""
     url = os.environ.get("E2E_BASE_URL")
     if not url:
