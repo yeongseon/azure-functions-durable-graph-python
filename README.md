@@ -70,7 +70,7 @@ azure-functions-durable-graph
 For local development:
 
 ```bash
-git clone https://github.com/yeongseon/azure-functions-durable-graph.git
+git clone https://github.com/yeongseon/azure-functions-durable-graph-python.git
 cd azure-functions-durable-graph
 pip install -e .[dev]
 ```
@@ -150,7 +150,8 @@ Part of the **Azure Functions Python DX Toolkit**:
 | [azure-functions-logging](https://github.com/yeongseon/azure-functions-logging-python) | Structured logging and observability |
 | [azure-functions-doctor](https://github.com/yeongseon/azure-functions-doctor-python) | Pre-deploy diagnostic CLI |
 | **azure-functions-durable-graph** | Manifest-first graph runtime with Durable Functions *(experimental)* |
-| [azure-functions-python-cookbook](https://github.com/yeongseon/azure-functions-cookbook-python) | Recipes and examples |
+| [azure-functions-knowledge-python](https://github.com/yeongseon/azure-functions-knowledge-python) | Knowledge retrieval (RAG) decorators |
+| [azure-functions-cookbook-python](https://github.com/yeongseon/azure-functions-cookbook-python) | Dogfood examples — runnable recipes that exercise the full toolkit |
 
 ## Disclaimer
 
