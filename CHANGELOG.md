@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
+- *(deps)* Bump mypy from 1.20.1 to 2.1.0 
+- *(deps)* Bump ruff from 0.15.10 to 0.15.12 
+- *(deps)* Bump github/codeql-action from 4.35.2 to 4.35.4 
+- *(deps)* Bump actions/github-script from 8.0.0 to 9.0.0 
+- *(deps)* Bump github/codeql-action from 4.35.1 to 4.35.2 
+- *(deps)* Bump mypy from 1.20.0 to 1.20.1 
+- *(deps)* Bump actions/upload-artifact from 7.0.0 to 7.0.1 
+- Add tests/e2e/ directory and test-unit/test-e2e Makefile targets (#16) 
+- Add llms.txt, llms-full.txt and bump ruff to 0.15.10 (#14) 
+
+### 🐛 Bug Fixes
+
+- *(test)* Add return type annotation to e2e_base_url fixture (#23) 
+
+### 💼 Other
+
+- Bump version to 0.1.1 
+
+### 📚 Documentation
+
+- Fix ecosystem table names, badges, and Part of intro line 
+- Fix self-repo badge/codecov URLs and ecosystem row to use -python suffix 
+- Mark cookbook as dogfood, fix ecosystem table description 
+- Fix cross-repo links and README title 
+- *(agents)* Add Issue Conventions section to AGENTS.md 
+
+### ⚙️ Miscellaneous Tasks
+
 - *(deps)* Bump codecov/codecov-action from 5.5.3 to 6.0.0 (#1) 
 - *(deps)* Update pytest-asyncio requirement (#2) 
 - *(deps)* Bump github/codeql-action from 4.33.0 to 4.35.1 (#3) 
@@ -25,6 +53,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
+- Update changelog 
 - Standardize ecosystem table in README 
 
 ### 🚀 Features
