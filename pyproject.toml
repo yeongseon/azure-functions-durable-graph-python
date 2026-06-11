@@ -30,10 +30,10 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://yeongseon.github.io/azure-functions-durable-graph/"
-Documentation = "https://yeongseon.github.io/azure-functions-durable-graph/"
-Repository = "https://github.com/yeongseon/azure-functions-durable-graph"
-Issues = "https://github.com/yeongseon/azure-functions-durable-graph/issues"
+Homepage = "https://yeongseon.github.io/azure-functions-durable-graph-python/"
+Documentation = "https://yeongseon.github.io/azure-functions-durable-graph-python/"
+Repository = "https://github.com/yeongseon/azure-functions-durable-graph-python"
+Issues = "https://github.com/yeongseon/azure-functions-durable-graph-python/issues"
 
 [project.optional-dependencies]
 dev = [
