@@ -209,13 +209,14 @@ Expected final state (for a question):
 
 The conditional routing is visible in the Durable Functions **History** view
 for any run. Each node produces one `afdg_execute_node` activity followed by
-one `afdg_resolve_route` activity, and the `RouteDecision` returned by
-`route_after_classify` is recorded as the result of the route activity.
+one `afdg_resolve_route` activity, and the `RouteDecision` dictionary returned
+by `route_after_classify` is recorded verbatim as the result of the route
+activity.
 
 For an input of `"How do I reset my password?"`, the recorded path is
 `classify → handle_question → summarize`:
 
-![Durable Functions orchestration history for content_classifier showing 14 events including RouteDecision(next="handle_question") and RouteDecision(complete)](../assets/portal/content-classifier-history.png)
+![Durable Functions History view for a content_classifier run taking the question branch (classify → handle_question → summarize), showing 14 events with serialized RouteDecision dictionaries](../assets/portal/content-classifier-history.png)
 
 You can use the same view to verify other branches: a complaint-style input
 takes the `handle_complaint` path and a generic message takes

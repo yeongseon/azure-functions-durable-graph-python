@@ -168,18 +168,20 @@ Once your Function App is deployed to Azure, the same graph runs appear in the
 healthy without pulling logs.
 
 In the **Orchestrations** tab, every graph run shows up as an
-`afdg_orchestrator` instance. The **Custom status** column carries the graph
-name and the node that was running at the last checkpoint, so you can see at a
-glance which graphs are active.
+`afdg_orchestrator` instance. The **Custom status** column holds the JSON
+dictionary that the orchestrator sets after every step
+(`graph_name`, `graph_version`, `graph_hash`, `current_node`), so you can see
+at a glance which graph each instance is running and where it is.
 
-![Durable Functions Orchestrations list filtered to afdg_orchestrator instances, all Completed](assets/portal/getting-started-instances.png)
+![Durable Functions Orchestrations list showing afdg_orchestrator instances with a JSON Custom status dictionary for the ticket_router graph](assets/portal/getting-started-instances.png)
 
-Drilling into an instance reveals the orchestrator **Output** — and the
-`output.graph_name` and `output.state` fields are exactly the shape returned by
-`GET /api/runs/{instance_id}`. This is the same JSON your client code consumes,
-captured by Durable Functions without any extra logging.
+Drilling into an instance reveals the orchestrator **Output** — the value
+returned by `afdg_orchestrator` on completion, with top-level fields
+`graph_name`, `graph_version`, `graph_hash`, `final_node`, and `state`.
+This same value is surfaced verbatim as the `output` field of
+`GET /api/runs/{instance_id}`.
 
-![Orchestration instance detail showing Output JSON with graph_name="ticket_router" and the final state](assets/portal/getting-started-instance-detail.png)
+![Orchestration instance detail Output panel showing the orchestrator return value with graph_name="ticket_router", final_node="respond", and the final state](assets/portal/getting-started-instance-detail.png)
 
 !!! note
     These screenshots show the Azure Portal **Durable Functions** blade for a
