@@ -18,6 +18,13 @@ permissions:
 jobs:
   build-and-publish:
     runs-on: ubuntu-latest
+    # PyPI trusted publisher (OIDC) configuration must stay in sync with:
+    #   Owner: yeongseon
+    #   Repository: azure-functions-durable-graph-python
+    #   Workflow filename: publish-pypi.yml
+    #   Environment: pypi
+    # See docs/release_process.md ("Trusted publisher configuration") for setup
+    # and troubleshooting invalid-publisher errors.
     environment: pypi
 
     steps:
@@ -52,5 +59,9 @@ jobs:
       - name: Build distribution packages
         run: python -m build
 
+      # Tokenless trusted publishing (OIDC). An `invalid-publisher` failure
+      # here almost always means the PyPI trusted publisher config drifted
+      # (repo rename, environment, or workflow filename mismatch), not a
+      # workflow secret issue. See docs/release_process.md.
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
