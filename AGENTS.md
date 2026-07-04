@@ -6,13 +6,36 @@
 ## Read First
 - `README.md`
 - `CONTRIBUTING.md`
+- `docs/agent-playbook.md`
 
 ## Working Rules
+
+### Test Coverage
+- Maintain test coverage at **95% or above** for committed changes and PRs.
+- Run `hatch run pytest --cov --cov-report=term-missing -q` to verify before submitting changes.
+- Any PR that drops coverage below 95% must include additional tests to compensate.
+- This package is Alpha (`0.1.0a0`); the coverage floor applies to committed changes and PRs — it prevents PRs from regressing coverage, it does not require existing code to already be at 95%.
 - Runtime code must remain compatible with Python 3.10+.
 - Public APIs must be fully typed.
 - The orchestrator must remain deterministic — all user logic runs in Durable Functions activities, never inside the orchestrator.
 - Keep documentation examples, manifest builder behaviour, and tests synchronized.
 - When bumping version, update `tests/test_public_api.py` to match the new version string.
+
+### Action Pinning
+- Pin every external GitHub Action `uses:` reference in `.github/workflows/` to a full commit SHA with a `# vX.Y.Z` comment.
+- Only local composite actions (`uses: ./...`) and the PyPA publish action (`pypa/gh-action-pypi-publish`) may skip SHA pinning; document any exception with an inline comment at the call site.
+- Dependabot updates SHA-pinned references on the configured schedule and opens PRs when new versions are available.
+
+## PR Workflow
+
+**Always issue-first.** Before opening any PR:
+
+1. Run `gh issue list` to check whether a tracking issue already exists for the change.
+2. If no issue exists, create one following the Issue Conventions below before writing any code.
+3. Open the PR only after the issue exists. The PR body **must** include `Closes #N` for every
+   issue it resolves — never open a PR that cannot be traced back to an issue.
+
+**Non-negotiable:** a PR without a linked issue will be rejected at review.
 
 ## Issue Conventions
 
@@ -60,3 +83,20 @@ When splitting a large piece of work into focused issues, keep the umbrella open
 - `make lint`
 - `make typecheck`
 - `make build`
+
+## Release Process
+- Version is managed via `hatch` (dynamic from `src/azure_functions_durable_graph/__init__.py`).
+- **Do NOT manually edit version strings.** Use the Makefile targets below.
+- When bumping version, update `tests/test_public_api.py` to match the new version string.
+
+### Commands
+- `make release-patch` — bump patch version, update changelog, tag, and push
+- `make release-minor` — bump minor version, update changelog, tag, and push
+- `make release-major` — bump major version, update changelog, tag, and push
+- `make release VERSION=x.y.z` — set explicit version, update changelog, tag, and push
+- `make tag-release VERSION=x.y.z` — create and push an annotated tag (used internally by release targets)
+
+### Flow
+1. `make release-patch` (or `-minor` / `-major`) on `main`
+2. This runs: `hatch version` → `git commit` → `make changelog` → `git commit` → `git tag` → `git push`
+3. Tag push triggers **Publish to PyPI** GitHub Actions workflow automatically.
