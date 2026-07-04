@@ -2,12 +2,12 @@
 
 [![PyPI](https://img.shields.io/pypi/v/azure-functions-durable-graph.svg)](https://pypi.org/project/azure-functions-durable-graph/)
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/azure-functions-durable-graph/)
-[![CI](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/ci-test.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/ci-test.yml)
-[![Release](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/publish-pypi.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/publish-pypi.yml)
-[![Security Scans](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/security.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph/actions/workflows/security.yml)
-[![codecov](https://codecov.io/gh/yeongseon/azure-functions-durable-graph/branch/main/graph/badge.svg)](https://codecov.io/gh/yeongseon/azure-functions-durable-graph)
+[![CI](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/ci-test.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/ci-test.yml)
+[![Release](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/publish-pypi.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/publish-pypi.yml)
+[![Security Scans](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/security.yml/badge.svg)](https://github.com/yeongseon/azure-functions-durable-graph-python/actions/workflows/security.yml)
+[![codecov](https://codecov.io/gh/yeongseon/azure-functions-durable-graph-python/branch/main/graph/badge.svg)](https://codecov.io/gh/yeongseon/azure-functions-durable-graph-python)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://pre-commit.com/)
-[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://yeongseon.github.io/azure-functions-durable-graph/)
+[![Docs](https://img.shields.io/badge/docs-gh--pages-blue)](https://yeongseon.github.io/azure-functions-durable-graph-python/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 其他语言: [한국어](README.ko.md) | [日本語](README.ja.md) | [English](README.md)
@@ -70,7 +70,7 @@ azure-functions-durable-graph
 本地开发：
 
 ```bash
-git clone https://github.com/yeongseon/azure-functions-durable-graph.git
+git clone https://github.com/yeongseon/azure-functions-durable-graph-python.git
 cd azure-functions-durable-graph
 pip install -e .[dev]
 ```

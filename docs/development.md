@@ -53,7 +53,7 @@ azure-functions-durable-graph/
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yeongseon/azure-functions-durable-graph.git
+    git clone https://github.com/yeongseon/azure-functions-durable-graph-python.git
     cd azure-functions-durable-graph
     ```
 

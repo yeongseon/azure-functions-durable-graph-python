@@ -177,7 +177,7 @@ pip install --index-url https://test.pypi.org/simple/ azure-functions-durable-gr
 
 ## Related
 
-- [CHANGELOG.md](https://github.com/yeongseon/azure-functions-durable-graph/blob/main/CHANGELOG.md)
+- [CHANGELOG.md](https://github.com/yeongseon/azure-functions-durable-graph-python/blob/main/CHANGELOG.md)
 - [Development Guide](development.md)
 - [Contributing](contributing.md)
 - [PyPI Publishing with Hatch](https://hatch.pypa.io/latest/publishing/)

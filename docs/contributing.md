@@ -118,4 +118,4 @@ The `CHANGELOG.md` is updated automatically via `git-cliff` during the release p
 
 ## Code of Conduct
 
-All contributors are expected to adhere to our [Code of Conduct](https://github.com/yeongseon/azure-functions-durable-graph/blob/main/CODE_OF_CONDUCT.md). We strive to maintain a respectful and inclusive environment for everyone.
+All contributors are expected to adhere to our [Code of Conduct](https://github.com/yeongseon/azure-functions-durable-graph-python/blob/main/CODE_OF_CONDUCT.md). We strive to maintain a respectful and inclusive environment for everyone.
