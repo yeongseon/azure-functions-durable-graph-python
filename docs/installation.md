@@ -66,7 +66,7 @@ Check that your active environment is the same one used by your Function App.
 ## Local Development
 
 ```bash
-git clone https://github.com/yeongseon/azure-functions-durable-graph.git
+git clone https://github.com/yeongseon/azure-functions-durable-graph-python.git
 cd azure-functions-durable-graph
 make install
 ```
