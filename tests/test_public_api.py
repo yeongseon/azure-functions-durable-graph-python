@@ -33,8 +33,8 @@ class TestAPISurface:
             "RouteDecision",
         }
 
-    def test_version_is_0_1_0(self) -> None:
-        assert azure_functions_durable_graph.__version__ == "0.1.0"
+    def test_version_is_0_1_1(self) -> None:
+        assert azure_functions_durable_graph.__version__ == "0.1.1"
 
     def test_manifest_builder_is_class(self) -> None:
         assert isinstance(ManifestBuilder, type)

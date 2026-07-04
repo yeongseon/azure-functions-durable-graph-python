@@ -161,6 +161,33 @@ sequenceDiagram
     Orch-->>Client: final state
 ```
 
+## Step 9 (optional): Verify in Azure Portal
+
+Once your Function App is deployed to Azure, the same graph runs appear in the
+**Durable Functions** blade. This is the easiest way to confirm a deployment is
+healthy without pulling logs.
+
+In the **Orchestrations** tab, every graph run shows up as an
+`afdg_orchestrator` instance. The **Custom status** column holds the JSON
+dictionary that the orchestrator sets after every step
+(`graph_name`, `graph_version`, `graph_hash`, `current_node`), so you can see
+at a glance which graph each instance is running and where it is.
+
+![Durable Functions Orchestrations list showing afdg_orchestrator instances with a JSON Custom status dictionary for the ticket_router graph](assets/portal/getting-started-instances.png)
+
+Drilling into an instance reveals the orchestrator **Output** — the value
+returned by `afdg_orchestrator` on completion, with top-level fields
+`graph_name`, `graph_version`, `graph_hash`, `final_node`, and `state`.
+This same value is surfaced verbatim as the `output` field of
+`GET /api/runs/{instance_id}`.
+
+![Orchestration instance detail Output panel showing the orchestrator return value with graph_name="ticket_router", final_node="respond", and the final state](assets/portal/getting-started-instance-detail.png)
+
+!!! note
+    These screenshots show the Azure Portal **Durable Functions** blade for a
+    deployed Function App. You do not need to deploy to follow this quickstart
+    — `func start` and the `curl` flow above are enough for local development.
+
 ## Next steps
 
 - Read [Configuration](configuration.md) to learn all `ManifestBuilder` options.
