@@ -1,5 +1,8 @@
 """Tests for the public API surface of azure-functions-durable-graph v0.1."""
 
+from __future__ import annotations
+
+import importlib.metadata
 from typing import Any
 
 from pydantic import BaseModel
@@ -33,8 +36,9 @@ class TestAPISurface:
             "RouteDecision",
         }
 
-    def test_version_is_0_1_1(self) -> None:
-        assert azure_functions_durable_graph.__version__ == "0.1.1"
+    def test_version_matches_package_metadata(self) -> None:
+        expected = importlib.metadata.version("azure-functions-durable-graph")
+        assert azure_functions_durable_graph.__version__ == expected
 
     def test_manifest_builder_is_class(self) -> None:
         assert isinstance(ManifestBuilder, type)
