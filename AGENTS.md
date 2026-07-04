@@ -19,7 +19,6 @@
 - Public APIs must be fully typed.
 - The orchestrator must remain deterministic — all user logic runs in Durable Functions activities, never inside the orchestrator.
 - Keep documentation examples, manifest builder behaviour, and tests synchronized.
-- When bumping version, update `tests/test_public_api.py` to match the new version string.
 
 ### Action Pinning
 - Pin every external GitHub Action `uses:` reference in `.github/workflows/` to a full commit SHA with a `# vX.Y.Z` comment.
@@ -86,8 +85,7 @@ When splitting a large piece of work into focused issues, keep the umbrella open
 
 ## Release Process
 - Version is managed via `hatch` (dynamic from `src/azure_functions_durable_graph/__init__.py`).
-- **Do NOT manually edit version strings.** Use the Makefile targets below.
-- When bumping version, update `tests/test_public_api.py` to match the new version string.
+- **Do NOT manually edit version strings.** Use the Makefile targets below. The public-API test reads `__version__` against `importlib.metadata.version(...)`, so no test changes are needed when bumping.
 
 ### Commands
 - `make release-patch` — bump patch version, update changelog, tag, and push
