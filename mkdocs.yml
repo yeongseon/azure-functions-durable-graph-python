@@ -17,9 +17,12 @@ nav:
       - Installation: installation.md
       - Quickstart: getting-started.md
       - Configuration: configuration.md
+      - Deployment: deployment.md
+      - Choose a Plan: choose-a-plan.md
   - User Guide:
       - Usage: usage.md
       - Architecture: architecture.md
+      - Durable Concepts: durable-concepts.md
   - Examples:
       - Data Pipeline: examples/data_pipeline.md
       - Content Classifier: examples/content_classifier.md

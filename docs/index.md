@@ -80,8 +80,10 @@ app = runtime.function_app
 ## Where to go next
 
 - Start with [Quickstart](getting-started.md).
+- Understand the runtime model in [Durable Concepts](durable-concepts.md).
 - Learn the manifest builder in [Configuration](configuration.md).
 - See full patterns in [Usage](usage.md).
+- Ship to Azure with the [Deployment](deployment.md) guide and [Choose a Plan](choose-a-plan.md).
 - Browse the support agent example in [Examples](examples/support_agent.md).
 - Explore public APIs in [API Reference](api.md).
 
