@@ -24,9 +24,7 @@ azure-functions-durable-graph/
 │       ├── app.py
 │       ├── contracts.py
 │       ├── manifest.py
-│       ├── registry.py
-│       └── adapters/
-│           └── __init__.py
+│       └── registry.py
 ├── tests/
 ├── examples/
 ├── docs/

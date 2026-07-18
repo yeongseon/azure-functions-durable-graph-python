@@ -225,3 +225,28 @@ def test_normalize_route_dict_is_validated() -> None:
 def test_normalize_route_unsupported_type_raises_type_error() -> None:
     with pytest.raises(TypeError, match="unsupported route decision"):
         _normalize_route_decision(node=_node(), raw=42)  # type: ignore[arg-type]
+
+
+def test_versions_tracks_registration_history() -> None:
+    reg = GraphRegistry()
+
+    builder_v1 = ManifestBuilder(graph_name="demo", state_model=DemoState, version="1")
+    builder_v1.set_entrypoint("classify")
+    builder_v1.add_node("classify", classify, next_node="finish")
+    builder_v1.add_node("finish", finish, terminal=True)
+    reg.register(builder_v1.build())
+
+    builder_v2 = ManifestBuilder(graph_name="demo", state_model=DemoState, version="2")
+    builder_v2.set_entrypoint("classify")
+    builder_v2.add_node("classify", classify, next_node="finish")
+    builder_v2.add_node("finish", finish, terminal=True)
+    with pytest.warns(UserWarning, match="re-registered with a new hash"):
+        reg.register(builder_v2.build())
+
+    assert reg.versions("demo") == ["1", "2"]
+
+
+def test_versions_unknown_graph_raises() -> None:
+    reg = GraphRegistry()
+    with pytest.raises(KeyError, match="unknown graph"):
+        reg.versions("nope")

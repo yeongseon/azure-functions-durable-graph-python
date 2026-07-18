@@ -115,6 +115,31 @@ app = runtime.function_app
 3. `GET /api/health` — 列出已注册的图
 4. `GET /api/openapi.json` — OpenAPI 文档
 
+## 运行时流程
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as HTTP Endpoint
+    participant Orch as afdg_orchestrator
+    participant Act as Activities
+
+    Client->>HTTP: POST /api/graphs/{name}/runs
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
+    loop until COMPLETE
+        Orch->>Act: afdg_execute_node(node, state)
+        Act-->>Orch: updated state
+        Orch->>Act: afdg_resolve_route(node, state)
+        Act-->>Orch: RouteDecision
+        alt wait_for_event
+            Orch->>Orch: wait_for_external_event
+            Orch->>Act: afdg_apply_event(event, state, payload)
+            Act-->>Orch: updated state
+        end
+    end
+    Orch-->>Client: final state
+```
+
 ## 适用场景
 
 - 需要在 Azure Functions 上运行图状 LLM 工作流
