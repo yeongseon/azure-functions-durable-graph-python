@@ -121,3 +121,29 @@ def test_multi_version_registration() -> None:
     # But by-hash still resolves v1
     assert reg.registration_by_hash("demo", hash_v1).manifest.version == "1"
     assert reg.registration_by_hash("demo", hash_v2).manifest.version == "2"
+
+
+
+def test_versions_tracks_registration_history() -> None:
+    reg = GraphRegistry()
+
+    builder_v1 = ManifestBuilder(graph_name="demo", state_model=DemoState, version="1")
+    builder_v1.set_entrypoint("classify")
+    builder_v1.add_node("classify", classify, next_node="finish")
+    builder_v1.add_node("finish", finish, terminal=True)
+    reg.register(builder_v1.build())
+
+    builder_v2 = ManifestBuilder(graph_name="demo", state_model=DemoState, version="2")
+    builder_v2.set_entrypoint("classify")
+    builder_v2.add_node("classify", classify, next_node="finish")
+    builder_v2.add_node("finish", finish, terminal=True)
+    with pytest.warns(UserWarning, match="re-registered with a new hash"):
+        reg.register(builder_v2.build())
+
+    assert reg.versions("demo") == ["1", "2"]
+
+
+def test_versions_unknown_graph_raises() -> None:
+    reg = GraphRegistry()
+    with pytest.raises(KeyError, match="unknown graph"):
+        reg.versions("nope")
