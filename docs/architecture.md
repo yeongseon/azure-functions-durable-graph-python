@@ -21,20 +21,20 @@ applications that run on Durable Functions without violating orchestrator determ
 sequenceDiagram
     participant Client as HTTP Client
     participant HTTP as HTTP Endpoints
-    participant DF as Durable Orchestrator
+    participant DF as afdg_orchestrator
     participant ACT as Activities
     participant REG as GraphRegistry
 
     Client->>HTTP: POST /api/graphs/{name}/runs
-    HTTP->>DF: start_new(orchestrator, input)
+    HTTP->>DF: start_new(afdg_orchestrator, input)
 
     loop For each node
-        DF->>ACT: execute_node(graph, node, state)
+        DF->>ACT: afdg_execute_node(graph, node, state)
         ACT->>REG: lookup handler, validate state
         REG-->>ACT: updated state
         ACT-->>DF: state dict
 
-        DF->>ACT: resolve_route(graph, node, state)
+        DF->>ACT: afdg_resolve_route(graph, node, state)
         ACT->>REG: lookup route handler
         REG-->>ACT: RouteDecision
         ACT-->>DF: decision dict
@@ -43,13 +43,18 @@ sequenceDiagram
             DF-->>Client: final state
         else wait_for_event
             DF->>DF: wait_for_external_event
-            DF->>ACT: apply_event(handler, state, payload)
+        DF->>ACT: afdg_apply_event(handler, state, payload)
             ACT-->>DF: updated state
         else next
             Note over DF: continue loop
         end
     end
 ```
+
+!!! note "Concrete function names"
+    The activity box maps to three registered Azure Functions activity triggers:
+    `afdg_execute_node`, `afdg_resolve_route`, and `afdg_apply_event`. The
+    orchestration trigger is `afdg_orchestrator` (see `app.py`).
 
 ## Runtime rule
 

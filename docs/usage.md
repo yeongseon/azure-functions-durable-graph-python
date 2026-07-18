@@ -117,6 +117,23 @@ curl -X POST http://localhost:7071/api/runs/{instance_id}/events/manager_approva
   -d '{"approved": true, "reviewer": "alice@example.com"}'
 ```
 
+The full event lifecycle — pause, deliver, apply, resume:
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Orch as afdg_orchestrator
+    participant Act as afdg_apply_event
+
+    Note over Orch: route handler returns<br/>RouteDecision.wait_for_event(event, resume_node)
+    Orch->>Orch: set custom_status (waiting_for_event, resume_node)
+    Orch->>Orch: wait_for_external_event(event)
+    Client->>Orch: POST /api/runs/{id}/events/{event} (payload)
+    Orch->>Act: afdg_apply_event(event, state, payload)
+    Act-->>Orch: merged state
+    Orch->>Orch: continue at resume_node
+```
+
 ## State merging
 
 Node handlers return partial state updates. The runtime merges them:
@@ -136,6 +153,19 @@ Merge rules:
 !!! warning "Shallow merge"
     Dict returns perform shallow merge. Nested dicts are replaced entirely,
     not recursively merged.
+
+```mermaid
+flowchart TD
+    A["Handler returns value"] --> B{"Return type?"}
+    B -->|"dict"| C["Shallow merge:<br/>state.update(result)<br/>(top-level keys only)"]
+    B -->|"BaseModel"| D["Replace:<br/>state = validate(result)"]
+    B -->|"None"| E["No change:<br/>keep current state"]
+    B -->|"other"| F["raise TypeError"]
+    C --> G["Validate against state model"]
+    D --> G
+    E --> G
+    G --> H["New state"]
+```
 
 ## Async handlers
 

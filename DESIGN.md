@@ -44,6 +44,24 @@ This repository owns:
 - Handler dispatch (node execution, route resolution, event application)
 - Data contracts (RouteAction, RouteDecision, OrchestrationInput, request/response envelopes)
 
+## Manifest to registration flow
+
+```mermaid
+flowchart LR
+    MB["ManifestBuilder"] -->|"build()"| GM["GraphManifest<br/>(validated, canonical JSON)"]
+    GM -->|"sha256[:16]"| GH["graph_hash"]
+    GM --> GR["GraphRegistration"]
+    GH --> GR
+    GR -->|"register_registration()"| REG["GraphRegistry"]
+    REG -->|"by name (latest)"| N["registration(name)"]
+    REG -->|"by name:hash (every version)"| H["registration_by_hash(name, hash)"]
+    N -->|"start run pins graph_hash"| O["afdg_orchestrator"]
+    H -->|"in-flight activity lookup"| O
+```
+
+The hash keying is what lets a redeploy change a graph while in-flight runs keep
+executing against the exact version they started with (side-by-side deploys).
+
 ## What This Package Does Not Own
 
 - LLM client management or prompt engineering
