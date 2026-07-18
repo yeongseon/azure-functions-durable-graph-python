@@ -94,6 +94,10 @@ class _CapturingBlueprint:
         self.routes: dict[tuple[str, tuple[str, ...]], Any] = {}
         self.orchestrator: Any = None
         self.activities: dict[str, Any] = {}
+        # The OpenAPI generator introspects this durable-functions internal;
+        # the capturing harness does not build real functions, so expose an
+        # empty list (real-SDK behaviour is covered in test_openapi.py).
+        self._function_builders: list[Any] = []
 
     def route(self, route: str = "", methods: tuple[str, ...] = ("GET",)) -> Any:
         def decorator(fn: Any) -> Any:
@@ -355,7 +359,11 @@ class TestRuntimeHandlers:
 
         response = handler(_make_http_request())
         assert response.status_code == 200
-        assert "openapi" in _json_body(response)
+        body = _json_body(response)
+        assert "openapi" in body
+        # Under the capturing harness the blueprint exposes no built functions,
+        # so paths are empty; the real-SDK spec is asserted in test_openapi.py.
+        assert body["paths"] == {}
 
     def test_health_reports_registered_graphs(self) -> None:
         _, app, bp = _import_app_with_capture()

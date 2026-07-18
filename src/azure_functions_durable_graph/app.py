@@ -9,7 +9,7 @@ import azure.durable_functions as df
 import azure.functions as func
 from pydantic import ValidationError
 
-from . import __version__, runtime
+from . import __version__, openapi, runtime
 from .contracts import (
     ErrorEnvelope,
     OrchestrationInput,
@@ -181,83 +181,11 @@ class DurableGraphApp:
             return await runtime.apply_event(self.registry, payload)
 
     def _build_openapi(self) -> dict[str, Any]:
-        return {
-            "openapi": "3.0.3",
-            "info": {
-                "title": "azure-functions-durable-graph runtime",
-                "version": __version__,
-            },
-            "paths": {
-                "/api/graphs/{graph_name}/runs": {
-                    "post": {
-                        "summary": "Start a graph run",
-                        "parameters": [
-                            {
-                                "name": "graph_name",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}": {
-                    "get": {
-                        "summary": "Get run status",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}/events/{event_name}": {
-                    "post": {
-                        "summary": "Raise an external event",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            },
-                            {
-                                "name": "event_name",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            },
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}/cancel": {
-                    "post": {
-                        "summary": "Terminate a run",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/health": {"get": {"summary": "Health"}},
-            },
-            "components": {
-                "schemas": {
-                    "RegisteredGraphs": {
-                        "type": "array",
-                        "items": {"type": "object"},
-                        "x-afdg-graphs": self.registry.list_manifests(),
-                    }
-                }
-            },
-        }
+        return openapi.build_openapi(
+            self.blueprint,
+            version=__version__,
+            registered_graphs=self.registry.list_manifests(),
+        )
 
 
 def _read_json(req: func.HttpRequest) -> dict[str, Any] | None:
