@@ -11,6 +11,7 @@ from pydantic import ValidationError
 
 from . import __version__
 from .contracts import (
+    ErrorEnvelope,
     EventApplyRequest,
     NodeExecutionRequest,
     OrchestrationInput,
@@ -56,12 +57,12 @@ class DurableGraphApp:
             try:
                 manifest = self.registry.manifest(graph_name)
             except KeyError:
-                return _json_response({"error": f"unknown graph '{graph_name}'"}, status_code=404)
+                return _error_response(f"unknown graph '{graph_name}'", status_code=404)
 
             body = _read_json(req)
             if body is None:
-                return _json_response(
-                    {"error": "request body must be valid JSON object"}, status_code=400
+                return _error_response(
+                    "request body must be valid JSON object", status_code=400
                 )
 
             instance_id = body.get("instance_id") or str(uuid.uuid4())
@@ -76,9 +77,8 @@ class DurableGraphApp:
                     metadata=metadata,
                 )
             except ValidationError as exc:
-                return _json_response(
-                    {"error": "invalid request body", "details": exc.errors()},
-                    status_code=400,
+                return _error_response(
+                    "invalid request body", status_code=400, details=exc.errors()
                 )
 
             logging.info(
@@ -105,7 +105,7 @@ class DurableGraphApp:
             status = await client.get_status(instance_id, show_input=True)
 
             if status is None:
-                return _json_response({"error": "instance not found"}, status_code=404)
+                return _error_response("instance not found", status_code=404)
 
             envelope = RunStatusEnvelope(
                 instance_id=instance_id,
@@ -127,7 +127,11 @@ class DurableGraphApp:
         ) -> func.HttpResponse:
             instance_id = req.route_params["instance_id"]
             event_name = req.route_params["event_name"]
-            event_payload = _read_json_any(req)
+            event_payload, parsed_ok = _read_event_payload(req)
+            if not parsed_ok:
+                return _error_response(
+                    "request body present but is not valid JSON", status_code=400
+                )
             await client.raise_event(instance_id, event_name, event_payload)
 
             return _json_response(
@@ -178,12 +182,12 @@ class DurableGraphApp:
 
             while True:
                 context.set_custom_status(
-                    {
-                        "graph_name": request.graph_name,
-                        "graph_version": manifest.version,
-                        "graph_hash": manifest.graph_hash,
-                        "current_node": current_node,
-                    }
+                    _status_payload(
+                        request.graph_name,
+                        manifest.version,
+                        manifest.graph_hash,
+                        current_node,
+                    )
                 )
 
                 state = yield context.call_activity(
@@ -218,14 +222,14 @@ class DurableGraphApp:
 
                 if decision.action == RouteAction.WAIT_FOR_EVENT:
                     context.set_custom_status(
-                        {
-                            "graph_name": request.graph_name,
-                            "graph_version": manifest.version,
-                            "graph_hash": manifest.graph_hash,
-                            "current_node": current_node,
-                            "waiting_for_event": decision.event_name,
-                            "resume_node": decision.resume_node,
-                        }
+                        _status_payload(
+                            request.graph_name,
+                            manifest.version,
+                            manifest.graph_hash,
+                            current_node,
+                            waiting_for_event=decision.event_name,
+                            resume_node=decision.resume_node,
+                        )
                     )
                     event_payload = yield context.wait_for_external_event(decision.event_name)
                     state = yield context.call_activity(
@@ -393,12 +397,21 @@ def _read_json(req: func.HttpRequest) -> dict[str, Any] | None:
         return None
 
 
-def _read_json_any(req: func.HttpRequest) -> Any:
-    """Parse request body as arbitrary JSON (not restricted to dicts)."""
+def _read_event_payload(req: func.HttpRequest) -> tuple[Any, bool]:
+    """Parse an external-event body as arbitrary JSON.
+
+    Returns ``(payload, parsed_ok)``.  An empty body is a valid "no payload"
+    event → ``(None, True)``.  A non-empty body that fails to parse is a
+    client error → ``(None, False)`` so the caller can return HTTP 400 instead
+    of silently raising the event with null data.
+    """
+    raw = req.get_body()
+    if not raw:
+        return None, True
     try:
-        return req.get_json()
+        return req.get_json(), True
     except ValueError:
-        return None
+        return None, False
 
 
 def _json_response(payload: dict[str, Any], status_code: int = 200) -> func.HttpResponse:
@@ -407,3 +420,33 @@ def _json_response(payload: dict[str, Any], status_code: int = 200) -> func.Http
         mimetype="application/json",
         status_code=status_code,
     )
+
+
+def _error_response(
+    error: str,
+    status_code: int,
+    details: Any | None = None,
+) -> func.HttpResponse:
+    """Build an HTTP error response from the shared :class:`ErrorEnvelope`."""
+    return _json_response(
+        ErrorEnvelope(error=error, details=details).model_dump(mode="python"),
+        status_code=status_code,
+    )
+
+
+def _status_payload(
+    graph_name: str,
+    graph_version: str,
+    graph_hash: str,
+    current_node: str,
+    **extra: Any,
+) -> dict[str, Any]:
+    """Build the orchestration custom-status payload (single source of truth)."""
+    payload: dict[str, Any] = {
+        "graph_name": graph_name,
+        "graph_version": graph_version,
+        "graph_hash": graph_hash,
+        "current_node": current_node,
+    }
+    payload.update(extra)
+    return payload

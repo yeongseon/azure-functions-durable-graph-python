@@ -55,10 +55,13 @@ def _make_http_request(
     req.route_params = route_params or {}
     if body_bytes is not None:
         req.get_json.side_effect = ValueError("invalid json")
+        req.get_body.return_value = body_bytes
     elif body is not None:
         req.get_json.return_value = body
+        req.get_body.return_value = b"<non-empty>"
     else:
         req.get_json.side_effect = ValueError("no body")
+        req.get_body.return_value = b""
     return req
 
 
@@ -566,7 +569,7 @@ class TestActivityFunctions:
 
 
 class TestReadJson:
-    """Test _read_json and _read_json_any helpers."""
+    """Test _read_json and _read_event_payload helpers."""
 
     def test_read_json_valid_dict(self) -> None:
         app_mod = _import_app()
@@ -586,17 +589,26 @@ class TestReadJson:
         result = app_mod._read_json(req)
         assert result is None
 
-    def test_read_json_any_valid(self) -> None:
+    def test_read_event_payload_valid(self) -> None:
         app_mod = _import_app()
         req = _make_http_request(body=["a", "b"])
-        result = app_mod._read_json_any(req)
-        assert result == ["a", "b"]
+        payload, parsed_ok = app_mod._read_event_payload(req)
+        assert payload == ["a", "b"]
+        assert parsed_ok is True
 
-    def test_read_json_any_invalid(self) -> None:
+    def test_read_event_payload_empty_body_is_ok(self) -> None:
+        app_mod = _import_app()
+        req = _make_http_request()
+        payload, parsed_ok = app_mod._read_event_payload(req)
+        assert payload is None
+        assert parsed_ok is True
+
+    def test_read_event_payload_invalid_body_flags_error(self) -> None:
         app_mod = _import_app()
         req = _make_http_request(body_bytes=b"not json")
-        result = app_mod._read_json_any(req)
-        assert result is None
+        payload, parsed_ok = app_mod._read_event_payload(req)
+        assert payload is None
+        assert parsed_ok is False
 
 
 class TestJsonResponse:

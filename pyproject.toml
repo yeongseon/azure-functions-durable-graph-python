@@ -42,12 +42,12 @@ dev = [
     "coverage",
     "git-cliff",
     "hatch",
-    "mypy==2.1.0",
+    "mypy==2.3.0",
     "pre-commit",
     "pytest",
     "pytest-asyncio>=0.23,<2",
     "pytest-cov",
-    "ruff==0.15.20",
+    "ruff==0.15.21",
     "requests",
     "types-requests",
 ]
@@ -129,17 +129,11 @@ markers = ["e2e: real Azure end-to-end tests (require E2E_BASE_URL)"]
 [tool.coverage.run]
 branch = true
 source = ["src/azure_functions_durable_graph"]
-omit = [
-    "src/azure_functions_durable_graph/adapters/*",
-]
 
 [tool.coverage.report]
 show_missing = true
 fail_under = 95
 skip_covered = true
-omit = [
-    "src/azure_functions_durable_graph/adapters/*",
-]
 
 [tool.bandit]
 exclude_dirs = ["tests"]

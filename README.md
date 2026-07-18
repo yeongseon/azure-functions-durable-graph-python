@@ -143,6 +143,31 @@ the full write-up in [Durable Concepts](docs/durable-concepts.md).
 6. **Top gotchas** — shallow-merge surprises, forgetting `host.json`, and reusing a
    task hub across environments. See [Troubleshooting](docs/troubleshooting.md).
 
+## Runtime flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as HTTP Endpoint
+    participant Orch as afdg_orchestrator
+    participant Act as Activities
+
+    Client->>HTTP: POST /api/graphs/{name}/runs
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
+    loop until COMPLETE
+        Orch->>Act: afdg_execute_node(node, state)
+        Act-->>Orch: updated state
+        Orch->>Act: afdg_resolve_route(node, state)
+        Act-->>Orch: RouteDecision
+        alt wait_for_event
+            Orch->>Orch: wait_for_external_event
+            Orch->>Act: afdg_apply_event(event, state, payload)
+            Act-->>Orch: updated state
+        end
+    end
+    Orch-->>Client: final state
+```
+
 ## When to use
 
 - You need graph-shaped LLM workflows on Azure Functions

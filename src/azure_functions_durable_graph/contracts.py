@@ -102,3 +102,15 @@ class RunStatusEnvelope(BaseModel):
     custom_status: Any | None = None
     input: Any | None = None
     output: Any | None = None
+
+
+class ErrorEnvelope(BaseModel):
+    """Shared error payload for HTTP error responses.
+
+    Provides a single, consistent shape for all error returns instead of
+    ad-hoc ``{"error": ...}`` dicts, aligning with the sibling langgraph
+    package's platform error contract.
+    """
+
+    error: str
+    details: Any | None = None

@@ -126,6 +126,31 @@ app = runtime.function_app
 5. **`host.json` 필수** — Durable Functions에는 Durable Task 확장과 확장 번들이 필요합니다. [Deployment](docs/deployment.md) 가이드를 참고하세요.
 6. **주요 함정** — 얕은 병합, `host.json` 누락, 환경 간 태스크 허브 재사용. [Troubleshooting](docs/troubleshooting.md) 참고.
 
+## 런타임 흐름
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as HTTP Endpoint
+    participant Orch as afdg_orchestrator
+    participant Act as Activities
+
+    Client->>HTTP: POST /api/graphs/{name}/runs
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
+    loop until COMPLETE
+        Orch->>Act: afdg_execute_node(node, state)
+        Act-->>Orch: updated state
+        Orch->>Act: afdg_resolve_route(node, state)
+        Act-->>Orch: RouteDecision
+        alt wait_for_event
+            Orch->>Orch: wait_for_external_event
+            Orch->>Act: afdg_apply_event(event, state, payload)
+            Act-->>Orch: updated state
+        end
+    end
+    Orch-->>Client: final state
+```
+
 ## 사용 시점
 
 - Azure Functions에서 그래프 형태의 LLM 워크플로가 필요한 경우

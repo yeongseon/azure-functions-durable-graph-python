@@ -126,6 +126,31 @@ app = runtime.function_app
 5. **`host.json` は必須** — Durable Functions には Durable Task 拡張と拡張バンドルが必要です。[Deployment](docs/deployment.md) ガイドを参照してください。
 6. **主な落とし穴** — 浅いマージ、`host.json` の忘れ、環境間でのタスクハブの再利用。[Troubleshooting](docs/troubleshooting.md) を参照。
 
+## ランタイムフロー
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as HTTP Endpoint
+    participant Orch as afdg_orchestrator
+    participant Act as Activities
+
+    Client->>HTTP: POST /api/graphs/{name}/runs
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
+    loop until COMPLETE
+        Orch->>Act: afdg_execute_node(node, state)
+        Act-->>Orch: updated state
+        Orch->>Act: afdg_resolve_route(node, state)
+        Act-->>Orch: RouteDecision
+        alt wait_for_event
+            Orch->>Orch: wait_for_external_event
+            Orch->>Act: afdg_apply_event(event, state, payload)
+            Act-->>Orch: updated state
+        end
+    end
+    Orch-->>Client: final state
+```
+
 ## 使用するタイミング
 
 - Azure Functions でグラフ形状の LLM ワークフローが必要な場合

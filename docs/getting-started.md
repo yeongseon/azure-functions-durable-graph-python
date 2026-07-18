@@ -145,21 +145,24 @@ Expected response:
 sequenceDiagram
     participant Client
     participant HTTP as HTTP Endpoint
-    participant Orch as Orchestrator
+    participant Orch as afdg_orchestrator
     participant Act as Activities
 
     Client->>HTTP: POST /api/graphs/ticket_router/runs
     HTTP->>Orch: Start orchestration
-    Orch->>Act: execute_node("classify", state)
+    Orch->>Act: afdg_execute_node("classify", state)
     Act-->>Orch: updated state
-    Orch->>Act: resolve_route("classify", state)
+    Orch->>Act: afdg_resolve_route("classify", state)
     Act-->>Orch: RouteDecision(next="respond")
-    Orch->>Act: execute_node("respond", state)
+    Orch->>Act: afdg_execute_node("respond", state)
     Act-->>Orch: updated state
-    Orch->>Act: resolve_route("respond", state)
+    Orch->>Act: afdg_resolve_route("respond", state)
     Act-->>Orch: RouteDecision(complete)
     Orch-->>Client: final state
 ```
+
+> The `Activities` participant maps to the concrete activity triggers
+> `afdg_execute_node`, `afdg_resolve_route`, and `afdg_apply_event`.
 
 ## Step 9 (optional): Verify in Azure Portal
 
