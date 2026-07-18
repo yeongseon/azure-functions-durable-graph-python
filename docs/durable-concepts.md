@@ -23,9 +23,10 @@ orchestrator (`afdg_orchestrator`) only ever:
 
 All side-effecting logic — node execution, route resolution, and event
 application — runs inside activity functions (`afdg_execute_node`,
-`afdg_resolve_route`, `afdg_apply_event`). Activities are executed exactly once
-and their results are recorded in the orchestration history, so replay never
-re-runs your LLM calls or tool invocations.
+`afdg_resolve_route`, `afdg_apply_event`). Activities are **at-least-once** (they
+can be retried on failure), but each successful result is recorded in the
+orchestration history, so replay never re-runs a call that already succeeded. Keep
+handlers idempotent so a retry cannot cause inconsistent side effects.
 
 !!! warning "Keep node/route/event handlers in activities"
     Never call an LLM, HTTP API, or database from code that runs inside the
@@ -89,10 +90,9 @@ When the orchestrator receives that decision it:
 Deliver an event from a client with:
 
 ```bash
-POST /api/runs/{instance_id}/events/{event_name}
-Content-Type: application/json
-
-{ "approved": true }
+curl -X POST http://localhost:7071/api/runs/{instance_id}/events/{event_name} \
+  -H "Content-Type: application/json" \
+  -d '{ "approved": true }'
 ```
 
 The endpoint accepts any JSON payload (object, array, scalar, or `null`) and

@@ -137,7 +137,7 @@ the full write-up in [Durable Concepts](docs/durable-concepts.md).
 4. **Events & resume** — a route handler can return
    `RouteDecision.wait_for_event(event_name, resume_node)` to pause the run; deliver
    the event with `POST /api/runs/{instance_id}/events/{event_name}` and execution
-   resumes at `resume_node` after the event handler merges its payload.
+   resumes at `resume_node` after the event handler's return value is merged into the state.
 5. **`host.json` is required** — Durable Functions needs the Durable Task extension
    and an extension bundle. See the [Deployment](docs/deployment.md) guide.
 6. **Top gotchas** — shallow-merge surprises, forgetting `host.json`, and reusing a

@@ -91,15 +91,16 @@ production:
 After deploying, confirm the app is healthy:
 
 ```bash
-GET /api/health            # lists registered graphs
-GET /api/openapi.json      # returns the OpenAPI document
+curl http://localhost:7071/api/health         # lists registered graphs
+curl http://localhost:7071/api/openapi.json    # returns the OpenAPI document
 ```
 
 Then start a run and poll it:
 
 ```bash
-POST /api/graphs/{graph_name}/runs
-GET  /api/runs/{instance_id}
+curl -X POST http://localhost:7071/api/graphs/{graph_name}/runs \
+  -H "Content-Type: application/json" -d '{}'
+curl http://localhost:7071/api/runs/{instance_id}
 ```
 
 ## See also
