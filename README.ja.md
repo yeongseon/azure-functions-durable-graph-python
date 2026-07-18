@@ -115,6 +115,17 @@ app = runtime.function_app
 3. `GET /api/health` — 登録済みグラフを一覧表示します
 4. `GET /api/openapi.json` — OpenAPI ドキュメント
 
+## デューラブル運用モデル
+
+本番デプロイ前に把握すべきデューラブル固有の概念です。詳細は [Durable Concepts](docs/durable-concepts.md) を参照してください。
+
+1. **オーケストレーターのライフサイクル** — オーケストレーターは決定的（deterministic）でリプレイ安全です。マニフェストを読み、アクティビティを呼び、イベントを待つだけで、`OrchestrationInput` の `graph_hash` でグラフバージョンを固定します。
+2. **マニフェスト → 登録 → ランタイム** — `ManifestBuilder.build()` が検証済みでハッシュバージョンされた `GraphRegistration` をコンパイルし、`register_registration()` で登録し、実行時に現在の `graph_hash` に対してアクティビティを実行します。
+3. **状態マージのセマンティクス** — ハンドラーが `dict` を返すと **浅いマージ**（トップレベルのキーのみ）、`BaseModel` は状態を **置換**、`None` は状態を **維持** します。ネストされた dict はディープマージされません。
+4. **イベントと再開** — ルートハンドラーは `RouteDecision.wait_for_event(event_name, resume_node)` を返して実行を一時停止できます。`POST /api/runs/{instance_id}/events/{event_name}` でイベントを送ると `resume_node` から再開します。
+5. **`host.json` は必須** — Durable Functions には Durable Task 拡張と拡張バンドルが必要です。[Deployment](docs/deployment.md) ガイドを参照してください。
+6. **主な落とし穴** — 浅いマージ、`host.json` の忘れ、環境間でのタスクハブの再利用。[Troubleshooting](docs/troubleshooting.md) を参照。
+
 ## ランタイムフロー
 
 ```mermaid

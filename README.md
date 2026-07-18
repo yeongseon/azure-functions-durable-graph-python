@@ -118,6 +118,31 @@ app = runtime.function_app
 3. `GET /api/health` — lists registered graphs
 4. `GET /api/openapi.json` — OpenAPI document
 
+## Durable operational model
+
+A few durable-specific concepts matter before you go to production. Each links to
+the full write-up in [Durable Concepts](docs/durable-concepts.md).
+
+1. **Orchestrator lifecycle** — the orchestrator is deterministic and replay-safe:
+   it only reads the manifest, calls activities, and waits for events. It pins the
+   graph version via `graph_hash` in `OrchestrationInput` and never runs LLM/tool
+   code directly.
+2. **Manifest → registration → runtime** — `ManifestBuilder.build()` compiles a
+   validated, hash-versioned `GraphRegistration`; `register_registration()` stores
+   it; a run pins the current `graph_hash` and executes activities against it.
+3. **State-merge semantics** — a handler returning a `dict` is **shallow-merged**
+   (top-level keys only), a `BaseModel` **replaces** the state, and `None` leaves
+   it **unchanged**. Nested dicts are not deep-merged — return the full nested
+   object or a full model to update them.
+4. **Events & resume** — a route handler can return
+   `RouteDecision.wait_for_event(event_name, resume_node)` to pause the run; deliver
+   the event with `POST /api/runs/{instance_id}/events/{event_name}` and execution
+   resumes at `resume_node` after the event handler's return value is merged into the state.
+5. **`host.json` is required** — Durable Functions needs the Durable Task extension
+   and an extension bundle. See the [Deployment](docs/deployment.md) guide.
+6. **Top gotchas** — shallow-merge surprises, forgetting `host.json`, and reusing a
+   task hub across environments. See [Troubleshooting](docs/troubleshooting.md).
+
 ## Runtime flow
 
 ```mermaid
@@ -154,13 +179,15 @@ sequenceDiagram
 
 | Example | Pattern | Key Concepts |
 |---------|---------|--------------|
-| [Data Pipeline](examples/data_pipeline/) | Sequential | `next_node` chaining, state accumulation |
-| [Content Classifier](examples/content_classifier/) | Conditional routing | `RouteDecision.next()`, fan-in topology |
-| [Support Agent](examples/support_agent/) | Human-in-the-loop | `wait_for_event`, external events, approval flow |
+| [Data Pipeline](examples/data_pipeline/) | Sequential | `next_node` chaining, state accumulation — deterministic multi-step orchestration |
+| [Content Classifier](examples/content_classifier/) | Conditional routing | `RouteDecision.next()`, fan-in topology — route handlers |
+| [Support Agent](examples/support_agent/) | Human-in-the-loop | `wait_for_event` / external events — pause-and-resume approval flow |
 
 ## Documentation
 
 - Project docs live under `docs/`
+- **New to durable graphs?** Read [Durable Concepts](docs/durable-concepts.md)
+- **Deploying to Azure?** See the [Deployment](docs/deployment.md) guide and [Choose a Plan](docs/choose-a-plan.md)
 - Smoke-tested examples live under `examples/`
 - Product requirements: `PRD.md`
 - Design principles: `DESIGN.md`

@@ -115,6 +115,17 @@ app = runtime.function_app
 3. `GET /api/health` — 등록된 그래프를 나열합니다
 4. `GET /api/openapi.json` — OpenAPI 문서
 
+## 두러블 운영 모델
+
+프로덕션 전에 알아야 할 두러블 관련 핵심 개념입니다. 자세한 내용은 [Durable Concepts](docs/durable-concepts.md)를 참고하세요.
+
+1. **오케스트레이터 수명 주기** — 오케스트레이터는 결정적(deterministic)이며 재실행에 안전합니다. 매니페스트를 읽고 액티비티를 호출하고 이벤트를 대기할 뿐이며, `OrchestrationInput`의 `graph_hash`로 그래프 버전을 고정합니다.
+2. **매니페스트 → 등록 → 런타임** — `ManifestBuilder.build()`가 검증되고 해시로 버전이 매겨진 `GraphRegistration`을 컴파일하고, `register_registration()`으로 등록한 뒤, 실행 시 현재 `graph_hash`에 대해 액티비티를 실행합니다.
+3. **상태 병합 규칙** — 핸들러가 `dict`를 반환하면 **얕은 병합**(최상위 키만), `BaseModel`을 반환하면 상태를 **교체**, `None`이면 상태를 **유지**합니다. 중첩 dict는 깊은 병합이 되지 않습니다.
+4. **이벤트 및 재개** — 라우트 핸들러가 `RouteDecision.wait_for_event(event_name, resume_node)`를 반환해 실행을 일시 중지할 수 있습니다. `POST /api/runs/{instance_id}/events/{event_name}`로 이벤트를 전달하면 `resume_node`에서 재개됩니다.
+5. **`host.json` 필수** — Durable Functions에는 Durable Task 확장과 확장 번들이 필요합니다. [Deployment](docs/deployment.md) 가이드를 참고하세요.
+6. **주요 함정** — 얕은 병합, `host.json` 누락, 환경 간 태스크 허브 재사용. [Troubleshooting](docs/troubleshooting.md) 참고.
+
 ## 런타임 흐름
 
 ```mermaid

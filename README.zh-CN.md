@@ -115,6 +115,17 @@ app = runtime.function_app
 3. `GET /api/health` — 列出已注册的图
 4. `GET /api/openapi.json` — OpenAPI 文档
 
+## 运行时模型（Durable）
+
+上生产前需要了解的 Durable 特有概念。详情请参阅 [Durable Concepts](docs/durable-concepts.md)。
+
+1. **编排器生命周期** — 编排器是确定性的（deterministic）且重放安全。它只读取清单、调用活动并等待事件，通过 `OrchestrationInput` 中的 `graph_hash` 锁定图版本。
+2. **清单 → 注册 → 运行时** — `ManifestBuilder.build()` 编译出经验证、按哈希版本化的 `GraphRegistration`；`register_registration()` 完成注册；运行时针对当前 `graph_hash` 执行活动。
+3. **状态合并语义** — 处理函数返回 `dict` 时为 **浅合并**（仅顶层键），`BaseModel` 会 **替换** 状态，`None` 则 **保持不变**。嵌套 dict 不会深度合并。
+4. **事件与恢复** — 路由处理函数可返回 `RouteDecision.wait_for_event(event_name, resume_node)` 来暂停运行；通过 `POST /api/runs/{instance_id}/events/{event_name}` 发送事件后从 `resume_node` 恢复。
+5. **必须提供 `host.json`** — Durable Functions 需要 Durable Task 扩展和扩展包。请参阅 [Deployment](docs/deployment.md) 指南。
+6. **常见陷阱** — 浅合并意外、遗漏 `host.json`、在不同环境间复用任务中心。参见 [Troubleshooting](docs/troubleshooting.md)。
+
 ## 运行时流程
 
 ```mermaid
