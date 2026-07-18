@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import inspect
 from typing import Any
+import warnings
 
 from pydantic import BaseModel
 
@@ -22,6 +23,7 @@ class GraphRegistry:
     def __init__(self) -> None:
         self._registrations: dict[str, GraphRegistration[Any]] = {}
         self._by_hash: dict[str, GraphRegistration[Any]] = {}
+        self._versions: dict[str, list[str]] = {}
 
     def _composite_key(self, graph_name: str, graph_hash: str) -> str:
         return f"{graph_name}:{graph_hash}"
@@ -32,8 +34,27 @@ class GraphRegistry:
         composite = self._composite_key(graph_name, graph_hash)
         if composite in self._by_hash:
             raise ValueError(f"graph '{graph_name}' with hash '{graph_hash}' is already registered")
+        if graph_name in self._registrations:
+            warnings.warn(
+                f"graph '{graph_name}' re-registered with a new hash '{graph_hash}'; "
+                "the latest version now serves new runs (in-flight runs remain "
+                "hash-fenced to the version they started with)",
+                stacklevel=2,
+            )
         self._registrations[graph_name] = registration
         self._by_hash[composite] = registration
+        self._versions.setdefault(graph_name, []).append(registration.manifest.version)
+
+    def versions(self, graph_name: str) -> list[str]:
+        """Return the registration history (in order) for *graph_name*.
+
+        Useful for operators to notice hot-reloads / multiple registered
+        versions of the same graph.  Raises ``KeyError`` for unknown graphs.
+        """
+        try:
+            return list(self._versions[graph_name])
+        except KeyError as exc:
+            raise KeyError(f"unknown graph '{graph_name}'") from exc
 
     def list_manifests(self) -> list[dict[str, Any]]:
         return [
