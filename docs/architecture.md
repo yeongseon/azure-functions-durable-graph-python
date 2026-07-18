@@ -26,7 +26,7 @@ sequenceDiagram
     participant REG as GraphRegistry
 
     Client->>HTTP: POST /api/graphs/{name}/runs
-    HTTP->>DF: start_new(afdg_orchestrator, input)
+    HTTP->>DF: start_new("afdg_orchestrator", input)
 
     loop For each node
         DF->>ACT: afdg_execute_node(graph, node, state)
@@ -43,7 +43,7 @@ sequenceDiagram
             DF-->>Client: final state
         else wait_for_event
             DF->>DF: wait_for_external_event
-        DF->>ACT: afdg_apply_event(handler, state, payload)
+            DF->>ACT: afdg_apply_event(event_name, state, payload)
             ACT-->>DF: updated state
         else next
             Note over DF: continue loop

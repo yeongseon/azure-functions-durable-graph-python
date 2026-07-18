@@ -122,13 +122,15 @@ The full event lifecycle — pause, deliver, apply, resume:
 ```mermaid
 sequenceDiagram
     participant Client
+    participant HTTP as HTTP endpoint
     participant Orch as afdg_orchestrator
     participant Act as afdg_apply_event
 
     Note over Orch: route handler returns<br/>RouteDecision.wait_for_event(event, resume_node)
     Orch->>Orch: set custom_status (waiting_for_event, resume_node)
     Orch->>Orch: wait_for_external_event(event)
-    Client->>Orch: POST /api/runs/{id}/events/{event} (payload)
+    Client->>HTTP: POST /api/runs/{id}/events/{event} (payload)
+    HTTP->>Orch: raise_event(id, event, payload)
     Orch->>Act: afdg_apply_event(event, state, payload)
     Act-->>Orch: merged state
     Orch->>Orch: continue at resume_node
@@ -158,7 +160,7 @@ Merge rules:
 flowchart TD
     A["Handler returns value"] --> B{"Return type?"}
     B -->|"dict"| C["Shallow merge:<br/>state.update(result)<br/>(top-level keys only)"]
-    B -->|"BaseModel"| D["Replace:<br/>state = validate(result)"]
+    B -->|"BaseModel"| D["Replace:<br/>state = state_model.model_validate(result.model_dump())"]
     B -->|"None"| E["No change:<br/>keep current state"]
     B -->|"other"| F["raise TypeError"]
     C --> G["Validate against state model"]

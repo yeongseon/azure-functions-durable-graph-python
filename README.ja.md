@@ -125,7 +125,7 @@ sequenceDiagram
     participant Act as Activities
 
     Client->>HTTP: POST /api/graphs/{name}/runs
-    HTTP->>Orch: start_new(afdg_orchestrator, input)
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
     loop until COMPLETE
         Orch->>Act: afdg_execute_node(node, state)
         Act-->>Orch: updated state
