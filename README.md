@@ -118,6 +118,31 @@ app = runtime.function_app
 3. `GET /api/health` — lists registered graphs
 4. `GET /api/openapi.json` — OpenAPI document
 
+## Runtime flow
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant HTTP as HTTP Endpoint
+    participant Orch as afdg_orchestrator
+    participant Act as Activities
+
+    Client->>HTTP: POST /api/graphs/{name}/runs
+    HTTP->>Orch: start_new("afdg_orchestrator", input)
+    loop until COMPLETE
+        Orch->>Act: afdg_execute_node(node, state)
+        Act-->>Orch: updated state
+        Orch->>Act: afdg_resolve_route(node, state)
+        Act-->>Orch: RouteDecision
+        alt wait_for_event
+            Orch->>Orch: wait_for_external_event
+            Orch->>Act: afdg_apply_event(event, state, payload)
+            Act-->>Orch: updated state
+        end
+    end
+    Orch-->>Client: final state
+```
+
 ## When to use
 
 - You need graph-shaped LLM workflows on Azure Functions
