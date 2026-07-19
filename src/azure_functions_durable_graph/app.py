@@ -9,15 +9,10 @@ import azure.durable_functions as df
 import azure.functions as func
 from pydantic import ValidationError
 
-from . import __version__
+from . import __version__, openapi, runtime
 from .contracts import (
     ErrorEnvelope,
-    EventApplyRequest,
-    NodeExecutionRequest,
     OrchestrationInput,
-    RouteAction,
-    RouteDecision,
-    RouteResolutionRequest,
     RunStatusEnvelope,
 )
 from .manifest import GraphRegistration
@@ -34,10 +29,10 @@ class DurableGraphApp:
         self.blueprint = df.Blueprint()
         self.registry = GraphRegistry()
 
-        self._orchestrator_name = "afdg_orchestrator"
-        self._node_activity_name = "afdg_execute_node"
-        self._route_activity_name = "afdg_resolve_route"
-        self._event_activity_name = "afdg_apply_event"
+        self._orchestrator_name = runtime.ORCHESTRATOR_NAME
+        self._node_activity_name = runtime.NODE_ACTIVITY_NAME
+        self._route_activity_name = runtime.ROUTE_ACTIVITY_NAME
+        self._event_activity_name = runtime.EVENT_ACTIVITY_NAME
 
         self._register_runtime_functions()
         self.function_app.register_functions(self.blueprint)
@@ -170,222 +165,27 @@ class DurableGraphApp:
 
         @self.blueprint.orchestration_trigger(context_name="context")  # type: ignore[untyped-decorator]
         def afdg_orchestrator(context: df.DurableOrchestrationContext) -> Any:
-            request = OrchestrationInput.model_validate(context.get_input())
-            registration = self.registry.registration_by_hash(
-                request.graph_name,
-                request.graph_hash,
-            )
-            manifest = registration.manifest
-
-            current_node = request.current_node or manifest.entrypoint
-            state: dict[str, Any] = request.initial_state
-
-            while True:
-                context.set_custom_status(
-                    _status_payload(
-                        request.graph_name,
-                        manifest.version,
-                        manifest.graph_hash,
-                        current_node,
-                    )
-                )
-
-                state = yield context.call_activity(
-                    self._node_activity_name,
-                    NodeExecutionRequest(
-                        graph_name=request.graph_name,
-                        graph_hash=request.graph_hash,
-                        node_name=current_node,
-                        state=state,
-                    ).model_dump(mode="python"),
-                )
-
-                decision_payload = yield context.call_activity(
-                    self._route_activity_name,
-                    RouteResolutionRequest(
-                        graph_name=request.graph_name,
-                        graph_hash=request.graph_hash,
-                        node_name=current_node,
-                        state=state,
-                    ).model_dump(mode="python"),
-                )
-                decision = RouteDecision.model_validate(decision_payload)
-
-                if decision.action == RouteAction.COMPLETE:
-                    return {
-                        "graph_name": request.graph_name,
-                        "graph_version": manifest.version,
-                        "graph_hash": manifest.graph_hash,
-                        "final_node": current_node,
-                        "state": state,
-                    }
-
-                if decision.action == RouteAction.WAIT_FOR_EVENT:
-                    context.set_custom_status(
-                        _status_payload(
-                            request.graph_name,
-                            manifest.version,
-                            manifest.graph_hash,
-                            current_node,
-                            waiting_for_event=decision.event_name,
-                            resume_node=decision.resume_node,
-                        )
-                    )
-                    event_payload = yield context.wait_for_external_event(decision.event_name)
-                    state = yield context.call_activity(
-                        self._event_activity_name,
-                        EventApplyRequest(
-                            graph_name=request.graph_name,
-                            graph_hash=request.graph_hash,
-                            event_name=decision.event_name or "",
-                            state=state,
-                            event_payload=event_payload,
-                        ).model_dump(mode="python"),
-                    )
-                    current_node = decision.resume_node or current_node
-                    continue
-
-                if not decision.next_node:
-                    raise ValueError("route decision with action 'next' must set next_node")
-
-                current_node = decision.next_node
+            result: dict[str, Any] = yield from runtime.orchestrate(context, self.registry)
+            return result
 
         @self.blueprint.activity_trigger(input_name="payload")  # type: ignore[untyped-decorator]
         async def afdg_execute_node(payload: dict[str, Any]) -> dict[str, Any]:
-            request = NodeExecutionRequest.model_validate(payload)
-            try:
-                return await self.registry.execute_node(
-                    request.graph_name,
-                    request.graph_hash,
-                    request.node_name,
-                    request.state,
-                )
-            except Exception:
-                logging.exception(
-                    "execute_node failed: graph=%s hash=%s node=%s",
-                    request.graph_name,
-                    request.graph_hash,
-                    request.node_name,
-                )
-                raise
+            return await runtime.execute_node(self.registry, payload)
 
         @self.blueprint.activity_trigger(input_name="payload")  # type: ignore[untyped-decorator]
         async def afdg_resolve_route(payload: dict[str, Any]) -> dict[str, Any]:
-            request = RouteResolutionRequest.model_validate(payload)
-            try:
-                return await self.registry.resolve_route(
-                    request.graph_name,
-                    request.graph_hash,
-                    request.node_name,
-                    request.state,
-                )
-            except Exception:
-                logging.exception(
-                    "resolve_route failed: graph=%s hash=%s node=%s",
-                    request.graph_name,
-                    request.graph_hash,
-                    request.node_name,
-                )
-                raise
+            return await runtime.resolve_route(self.registry, payload)
 
         @self.blueprint.activity_trigger(input_name="payload")  # type: ignore[untyped-decorator]
         async def afdg_apply_event(payload: dict[str, Any]) -> dict[str, Any]:
-            request = EventApplyRequest.model_validate(payload)
-            try:
-                return await self.registry.apply_event(
-                    request.graph_name,
-                    request.graph_hash,
-                    request.event_name,
-                    request.state,
-                    request.event_payload,
-                )
-            except Exception:
-                logging.exception(
-                    "apply_event failed: graph=%s hash=%s event=%s",
-                    request.graph_name,
-                    request.graph_hash,
-                    request.event_name,
-                )
-                raise
+            return await runtime.apply_event(self.registry, payload)
 
     def _build_openapi(self) -> dict[str, Any]:
-        return {
-            "openapi": "3.0.3",
-            "info": {
-                "title": "azure-functions-durable-graph runtime",
-                "version": __version__,
-            },
-            "paths": {
-                "/api/graphs/{graph_name}/runs": {
-                    "post": {
-                        "summary": "Start a graph run",
-                        "parameters": [
-                            {
-                                "name": "graph_name",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}": {
-                    "get": {
-                        "summary": "Get run status",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}/events/{event_name}": {
-                    "post": {
-                        "summary": "Raise an external event",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            },
-                            {
-                                "name": "event_name",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            },
-                        ],
-                    }
-                },
-                "/api/runs/{instance_id}/cancel": {
-                    "post": {
-                        "summary": "Terminate a run",
-                        "parameters": [
-                            {
-                                "name": "instance_id",
-                                "in": "path",
-                                "required": True,
-                                "schema": {"type": "string"},
-                            }
-                        ],
-                    }
-                },
-                "/api/health": {"get": {"summary": "Health"}},
-            },
-            "components": {
-                "schemas": {
-                    "RegisteredGraphs": {
-                        "type": "array",
-                        "items": {"type": "object"},
-                        "x-afdg-graphs": self.registry.list_manifests(),
-                    }
-                }
-            },
-        }
+        return openapi.build_openapi(
+            self.blueprint,
+            version=__version__,
+            registered_graphs=self.registry.list_manifests(),
+        )
 
 
 def _read_json(req: func.HttpRequest) -> dict[str, Any] | None:
@@ -433,20 +233,3 @@ def _error_response(
         status_code=status_code,
     )
 
-
-def _status_payload(
-    graph_name: str,
-    graph_version: str,
-    graph_hash: str,
-    current_node: str,
-    **extra: Any,
-) -> dict[str, Any]:
-    """Build the orchestration custom-status payload (single source of truth)."""
-    payload: dict[str, Any] = {
-        "graph_name": graph_name,
-        "graph_version": graph_version,
-        "graph_hash": graph_hash,
-        "current_node": current_node,
-    }
-    payload.update(extra)
-    return payload
