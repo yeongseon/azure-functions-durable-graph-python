@@ -20,6 +20,11 @@
 - The orchestrator must remain deterministic — all user logic runs in Durable Functions activities, never inside the orchestrator.
 - Keep documentation examples, manifest builder behaviour, and tests synchronized.
 
+### Documentation & Translations
+- When a change touches `README.md` or any English documentation, update the translated READMEs (`README.ko.md`, `README.ja.md`, `README.zh-CN.md`) **in the same PR** so translations never drift from the English source.
+- This applies to any code change that alters documented behavior, CLI output, or the ecosystem/package table — not just direct edits to prose.
+- If a full translation cannot land in the same PR, add a short "translation pending" note to the affected translated file and open a tracking issue before merging.
+
 ### Action Pinning
 - Pin every external GitHub Action `uses:` reference in `.github/workflows/` to a full commit SHA with a `# vX.Y.Z` comment.
 - Only local composite actions (`uses: ./...`) and the PyPA publish action (`pypa/gh-action-pypi-publish`) may skip SHA pinning; document any exception with an inline comment at the call site.
