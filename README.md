@@ -191,6 +191,7 @@ sequenceDiagram
 - Smoke-tested examples live under `examples/`
 - Product requirements: `PRD.md`
 - Design principles: `DESIGN.md`
+
 ## Ecosystem
 
 Part of the **Azure Functions Python DX Toolkit**:
