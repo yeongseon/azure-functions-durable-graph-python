@@ -177,15 +177,18 @@ sequenceDiagram
 
 **Azure Functions Python DX Toolkit** 的一部分：
 
-| 包 | 角色 |
+| 包 | 职责 |
 |---------|------|
-| [azure-functions-validation](https://github.com/yeongseon/azure-functions-validation) | 请求和响应验证 |
-| [azure-functions-openapi](https://github.com/yeongseon/azure-functions-openapi) | OpenAPI 规范和 Swagger UI |
-| [azure-functions-logging](https://github.com/yeongseon/azure-functions-logging) | 结构化日志和可观测性 |
-| [azure-functions-doctor](https://github.com/yeongseon/azure-functions-doctor) | 部署前诊断 CLI |
-| [azure-functions-scaffold](https://github.com/yeongseon/azure-functions-scaffold) | 项目脚手架 |
-| **azure-functions-durable-graph** | 基于 Durable Functions 的清单图运行时 |
-| [azure-functions-python-cookbook](https://github.com/yeongseon/azure-functions-python-cookbook) | 开发手册和示例 |
+| [azure-functions-openapi-python](https://github.com/yeongseon/azure-functions-openapi-python) | OpenAPI 规范生成与 Swagger UI |
+| [azure-functions-validation-python](https://github.com/yeongseon/azure-functions-validation-python) | 请求/响应校验与序列化 |
+| [azure-functions-db-python](https://github.com/yeongseon/azure-functions-db-python) | 基于 SQLAlchemy 的数据库集成助手（基于轮询的伪触发器，输入/输出/客户端注入） |
+| [azure-functions-langgraph-python](https://github.com/yeongseon/azure-functions-langgraph-python) | 面向 Azure Functions 的 LangGraph 部署适配器 |
+| [azure-functions-scaffold-python](https://github.com/yeongseon/azure-functions-scaffold-python) | 项目脚手架 CLI |
+| [azure-functions-logging-python](https://github.com/yeongseon/azure-functions-logging-python) | 结构化日志与可观测性 |
+| [azure-functions-doctor-python](https://github.com/yeongseon/azure-functions-doctor-python) | 部署前诊断 CLI |
+| **azure-functions-durable-graph-python** | 基于 Durable Functions 的清单优先图运行时 *(实验性)* |
+| [azure-functions-knowledge-python](https://github.com/yeongseon/azure-functions-knowledge-python) | 知识检索（RAG）装饰器 |
+| [azure-functions-cookbook-python](https://github.com/yeongseon/azure-functions-cookbook-python) | 内部实践示例 — 可运行的完整工具链演示 |
 
 ## 免责声明
 
