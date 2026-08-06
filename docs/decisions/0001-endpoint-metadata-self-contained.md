@@ -4,6 +4,10 @@
 - **Date:** 2026-08-07
 - **Issue:** [azure-functions-durable-graph#111](https://github.com/yeongseon/azure-functions-durable-graph/issues/111)
 - **Umbrella:** [azure-functions-validation#270](https://github.com/yeongseon/azure-functions-validation-python/issues/270)
+- **Localization:** Architecture Decision Records are canonical, English-only
+  historical documents. They are intentionally outside the translated README
+  set (`README.ko.md`, `README.ja.md`, `README.zh-CN.md`) and require no
+  translation updates.
 
 ## Context
 
