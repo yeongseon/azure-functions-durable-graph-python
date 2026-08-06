@@ -23,6 +23,8 @@ nav:
       - Usage: usage.md
       - Architecture: architecture.md
       - Durable Concepts: durable-concepts.md
+  - Design Decisions:
+      - "ADR-0001: Endpoint metadata (self-contained)": decisions/0001-endpoint-metadata-self-contained.md
   - Examples:
       - Data Pipeline: examples/data_pipeline.md
       - Content Classifier: examples/content_classifier.md
