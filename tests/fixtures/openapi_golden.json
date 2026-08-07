@@ -1,12 +1,99 @@
 {
   "components": {
     "schemas": {
+      "CancelRunRequest": {
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CheckStatusResponse": {
+        "additionalProperties": true,
+        "description": "Azure Durable Functions check-status payload (management URLs). Shape is owned by the durable SDK and is intentionally open.",
+        "type": "object"
+      },
+      "ErrorEnvelope": {
+        "description": "Shared error payload for HTTP error responses.\n\nProvides a single, consistent shape for all error returns instead of\nad-hoc ``{\"error\": ...}`` dicts, aligning with the sibling langgraph\npackage's platform error contract.",
+        "properties": {
+          "details": {},
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "EventAcceptedResponse": {
+        "properties": {
+          "accepted": {
+            "type": "boolean"
+          },
+          "event_name": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "RegisteredGraphs": {
         "items": {
           "type": "object"
         },
         "type": "array",
         "x-afdg-graphs": []
+      },
+      "RunCancelledResponse": {
+        "properties": {
+          "instance_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "terminated": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "RunStatusEnvelope": {
+        "properties": {
+          "custom_status": {},
+          "input": {},
+          "instance_id": {
+            "type": "string"
+          },
+          "output": {},
+          "runtime_status": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "instance_id"
+        ],
+        "type": "object"
+      },
+      "StartGraphRunRequest": {
+        "description": "Wire body for starting a graph run. The server injects graph_name/graph_hash; only these fields are client-supplied.",
+        "properties": {
+          "input": {
+            "type": "object"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "type": "object"
       }
     }
   },
@@ -28,16 +115,68 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartGraphRunRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckStatusResponse"
+                }
+              }
+            },
+            "description": "Run accepted; durable check-status URLs."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Invalid or malformed request body."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Unknown graph."
+          }
+        },
         "summary": "Start a graph run"
       }
     },
     "/api/health": {
       "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "summary": "Health"
       }
     },
     "/api/openapi.json": {
       "get": {
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "summary": "OpenAPI document"
       }
     },
@@ -53,6 +192,28 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunStatusEnvelope"
+                }
+              }
+            },
+            "description": "Current run status."
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Instance not found."
+          }
+        },
         "summary": "Get run status"
       }
     },
@@ -68,6 +229,28 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelRunRequest"
+              }
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RunCancelledResponse"
+                }
+              }
+            },
+            "description": "Run cancellation accepted."
+          }
+        },
         "summary": "Terminate a run"
       }
     },
@@ -91,6 +274,36 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          },
+          "required": false
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventAcceptedResponse"
+                }
+              }
+            },
+            "description": "Event accepted."
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            },
+            "description": "Request body present but is not valid JSON."
+          }
+        },
         "summary": "Raise an external event"
       }
     }
