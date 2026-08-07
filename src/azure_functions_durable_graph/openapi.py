@@ -10,6 +10,11 @@ The blueprint exposes its registrations through the *private*
 ``azure-durable-functions``; :func:`_get_function_builders` guards against it
 disappearing so an SDK upgrade fails loudly here (with a test to match) instead
 of silently emitting an empty spec.
+
+durable-graph deliberately derives its OpenAPI here rather than emitting the
+shared ``endpoint`` metadata namespace consumed by ``azure-functions-openapi``.
+See ``docs/decisions/0001-endpoint-metadata-self-contained.md`` (ADR-0001) for
+the rationale and the conditions under which that decision should be revisited.
 """
 
 from __future__ import annotations
