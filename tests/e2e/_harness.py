@@ -121,6 +121,7 @@ def run_graph(
     while True:
         steps += 1
         if steps > max_steps:  # pragma: no cover - guards against runaway graphs
+            gen.close()
             raise RuntimeError(f"orchestration exceeded max_steps={max_steps}")
         try:
             task = gen.send(send_value)

@@ -1,10 +1,10 @@
 """E2E scenario: hash-fencing across a redeploy.
 
-When a graph is re-registered with changed node logic it gets a new
-``graph_hash``. In-flight runs stay pinned to the hash they started with, while
+When a graph is re-registered with a changed manifest (a new ``version`` or
+changed node identity) it gets a new ``graph_hash``. In-flight runs stay pinned
 new runs use the latest hash. This scenario asserts:
 
-* changing a handler changes the ``graph_hash``;
+* changing the manifest structure (version + node identity) changes the ``graph_hash``;
 * both versions remain independently runnable via their own hash;
 * looking up an unknown/stale hash raises ``KeyError``.
 """
@@ -53,15 +53,18 @@ def test_changed_handler_changes_hash_and_runs_are_fenced() -> None:
     hash_v1 = reg_v1.manifest.graph_hash
     hash_v2 = reg_v2.manifest.graph_hash
 
-    # Different node logic ⇒ different hash.
+    # Different manifest structure (new version + handler name) ⇒ different hash.
     assert hash_v1 != hash_v2
 
     registry = GraphRegistry()
     registry.register(reg_v1)
     # Re-registering the same graph name with a new hash warns but is allowed.
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
         registry.register(reg_v2)
+    assert any(
+        "re-registered with a new hash" in str(w.message) for w in caught
+    ), "expected a re-registration warning when registering a new hash for 'calc'"
 
     # A run pinned to v1's hash uses v1 logic (+1); v2's hash uses v2 logic (+10).
     out_v1 = run_graph(
