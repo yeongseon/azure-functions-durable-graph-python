@@ -19,8 +19,11 @@ the rationale and the conditions under which that decision should be revisited.
 
 from __future__ import annotations
 
+import copy
 import re
 from typing import Any
+
+from .contracts import ErrorEnvelope, RunStatusEnvelope
 
 _PARAM_RE = re.compile(r"\{(\w+)\}")
 
@@ -35,6 +38,166 @@ _SUMMARIES: dict[str, str] = {
     "openapi_document": "OpenAPI document",
     "health": "Health",
 }
+
+
+def _strip_titles(obj: Any) -> Any:
+    """Recursively drop Pydantic-emitted ``title`` keys for a stable, terse spec."""
+    if isinstance(obj, dict):
+        return {k: _strip_titles(v) for k, v in obj.items() if k != "title"}
+    if isinstance(obj, list):
+        return [_strip_titles(item) for item in obj]
+    return obj
+
+
+def _normalize_nullable(obj: Any) -> Any:
+    """Rewrite Pydantic v2 / JSON-Schema-2020 ``anyOf: [X, {type: null}]`` into the
+    OpenAPI 3.0.3 ``nullable: true`` idiom.
+
+    ``model_json_schema`` emits ``{"type": "null"}`` for optional fields, which is
+    OpenAPI 3.1 syntax and is rejected by 3.0.3 validators/codegen. This collapses
+    the null branch: a single non-null member merges with ``nullable: true``; an
+    empty (``{}``, i.e. "any value") member becomes ``{}`` (already permits null). A
+    redundant ``default: null`` sibling is dropped.
+    """
+    if isinstance(obj, list):
+        return [_normalize_nullable(item) for item in obj]
+    if not isinstance(obj, dict):
+        return obj
+
+    normalized = {k: _normalize_nullable(v) for k, v in obj.items() if k != "anyOf"}
+    any_of = obj.get("anyOf")
+    if not isinstance(any_of, list) or not any(
+        isinstance(m, dict) and m.get("type") == "null" for m in any_of
+    ):
+        # No null branch: keep anyOf as-is (still recurse into its members).
+        if isinstance(any_of, list):
+            normalized["anyOf"] = [_normalize_nullable(m) for m in any_of]
+        return normalized
+
+    def _is_null(member: Any) -> bool:
+        return isinstance(member, dict) and member.get("type") == "null"
+
+    members = [_normalize_nullable(m) for m in any_of if not _is_null(m)]
+    if obj.get("default") is None:
+        normalized.pop("default", None)
+    if len(members) == 1:
+        member = members[0]
+        if isinstance(member, dict) and member:
+            normalized.update(member)
+            normalized["nullable"] = True
+        # else: empty ``{}`` already permits any value including null.
+    elif members:
+        normalized["anyOf"] = members
+        normalized["nullable"] = True
+    return normalized
+
+
+def _model_component(model_cls: Any, schemas: dict[str, Any]) -> None:
+    """Add *model_cls* (and any nested ``$defs``) to ``schemas`` as OpenAPI
+    components, rewriting local refs to point at ``components.schemas`` and
+    normalising nullable fields to the OpenAPI 3.0.3 idiom."""
+    schema = model_cls.model_json_schema(ref_template="#/components/schemas/{model}")
+    for name, definition in (schema.pop("$defs", None) or {}).items():
+        schemas.setdefault(name, _normalize_nullable(_strip_titles(definition)))
+    schemas[model_cls.__name__] = _normalize_nullable(_strip_titles(schema))
+
+
+# Hand-authored schemas for wire shapes that have no Pydantic contract model
+# (request bodies and the ad-hoc 202 acknowledgement payloads).
+_STATIC_SCHEMAS: dict[str, dict[str, Any]] = {
+    "StartGraphRunRequest": {
+        "type": "object",
+        "description": "Wire body for starting a graph run. The server injects "
+        "graph_name/graph_hash; only these fields are client-supplied.",
+        "properties": {
+            "instance_id": {"type": "string"},
+            "input": {"type": "object"},
+            "metadata": {"type": "object"},
+        },
+    },
+    "CancelRunRequest": {
+        "type": "object",
+        "properties": {"reason": {"type": "string"}},
+    },
+    "CheckStatusResponse": {
+        "type": "object",
+        "description": "Azure Durable Functions check-status payload (management "
+        "URLs). Shape is owned by the durable SDK and is intentionally open.",
+        "additionalProperties": True,
+    },
+    "EventAcceptedResponse": {
+        "type": "object",
+        "properties": {
+            "instance_id": {"type": "string"},
+            "event_name": {"type": "string"},
+            "accepted": {"type": "boolean"},
+        },
+    },
+    "RunCancelledResponse": {
+        "type": "object",
+        "properties": {
+            "instance_id": {"type": "string"},
+            "terminated": {"type": "boolean"},
+            "reason": {"type": "string"},
+        },
+    },
+}
+
+
+def _json_ref(name: str) -> dict[str, Any]:
+    """An ``application/json`` content block referencing a component schema."""
+    return {"content": {"application/json": {"schema": {"$ref": f"#/components/schemas/{name}"}}}}
+
+
+def _ref_response(description: str, name: str) -> dict[str, Any]:
+    return {"description": description, **_json_ref(name)}
+
+
+def _error_response(description: str) -> dict[str, Any]:
+    return _ref_response(description, "ErrorEnvelope")
+
+
+def _ref_body(name: str) -> dict[str, Any]:
+    return {"required": False, **_json_ref(name)}
+
+
+# Request bodies and responses keyed by the registered function name. Anything
+# not listed falls back to a generic ``200 OK`` so meta endpoints (openapi.json,
+# health) still produce a valid operation object.
+_OPERATION_IO: dict[str, dict[str, Any]] = {
+    "start_graph_run": {
+        "requestBody": _ref_body("StartGraphRunRequest"),
+        "responses": {
+            "202": _ref_response("Run accepted; durable check-status URLs.", "CheckStatusResponse"),
+            "400": _error_response("Invalid or malformed request body."),
+            "404": _error_response("Unknown graph."),
+        },
+    },
+    "get_run_status": {
+        "responses": {
+            "200": _ref_response("Current run status.", "RunStatusEnvelope"),
+            "404": _error_response("Instance not found."),
+        },
+    },
+    "send_run_event": {
+        "requestBody": {
+            "required": False,
+            "content": {"application/json": {"schema": {}}},
+        },
+        "responses": {
+            "202": _ref_response("Event accepted.", "EventAcceptedResponse"),
+            "400": _error_response("Request body present but is not valid JSON."),
+        },
+    },
+    "cancel_run": {
+        "requestBody": _ref_body("CancelRunRequest"),
+        "responses": {
+            "202": _ref_response("Run cancellation accepted.", "RunCancelledResponse"),
+        },
+    },
+}
+
+_DEFAULT_RESPONSES: dict[str, Any] = {"200": {"description": "OK"}}
 
 
 def _get_function_builders(blueprint: Any) -> list[Any]:
@@ -78,6 +241,12 @@ def _path_parameters(route: str) -> list[dict[str, Any]]:
     ]
 
 
+def _deepcopy_operation(operation: dict[str, Any]) -> dict[str, Any]:
+    """Copy an operation so shared module-level IO dicts are not aliased across
+    methods/paths in the emitted document."""
+    return copy.deepcopy(operation)
+
+
 def build_openapi(
     blueprint: Any,
     *,
@@ -108,9 +277,26 @@ def build_openapi(
         if parameters:
             operation["parameters"] = parameters
 
+        io = _OPERATION_IO.get(name)
+        if io and "requestBody" in io:
+            operation["requestBody"] = io["requestBody"]
+        operation["responses"] = io["responses"] if io else _DEFAULT_RESPONSES
+
         path_item = paths.setdefault(f"/api/{route}", {})
         for method in _methods(binding_dict):
-            path_item[method] = dict(operation)
+            path_item[method] = _deepcopy_operation(operation)
+
+    schemas: dict[str, Any] = {
+        "RegisteredGraphs": {
+            "type": "array",
+            "items": {"type": "object"},
+            "x-afdg-graphs": registered_graphs,
+        },
+    }
+    _model_component(RunStatusEnvelope, schemas)
+    _model_component(ErrorEnvelope, schemas)
+    for name, static_schema in _STATIC_SCHEMAS.items():
+        schemas[name] = static_schema
 
     return {
         "openapi": "3.0.3",
@@ -119,13 +305,5 @@ def build_openapi(
             "version": version,
         },
         "paths": paths,
-        "components": {
-            "schemas": {
-                "RegisteredGraphs": {
-                    "type": "array",
-                    "items": {"type": "object"},
-                    "x-afdg-graphs": registered_graphs,
-                }
-            }
-        },
+        "components": {"schemas": schemas},
     }
