@@ -5,20 +5,20 @@
 Part of the **Azure Functions Python DX Toolkit**. Define workflows as a declarative graph manifest and run them on Azure Durable Functions — get orchestration, fan-out/fan-in, and retries without hand-writing orchestrator code. Install with `pip install azure-functions-durable-graph` (once published).
 
 ## Getting Started
-- [Installation](https://yeongseon.github.io/azure-functions-durable-graph-python/installation/): Install the package.
-- [Quickstart](https://yeongseon.github.io/azure-functions-durable-graph-python/getting-started/): Minimal end-to-end example.
-- [Configuration](https://yeongseon.github.io/azure-functions-durable-graph-python/configuration/): Configure the runtime.
+- [Installation](https://yeongseon.dev/azure-functions-python/durable-graph/installation/): Install the package.
+- [Quickstart](https://yeongseon.dev/azure-functions-python/durable-graph/getting-started/): Minimal end-to-end example.
+- [Configuration](https://yeongseon.dev/azure-functions-python/durable-graph/configuration/): Configure the runtime.
 
 ## User Guide
-- [Usage](https://yeongseon.github.io/azure-functions-durable-graph-python/usage/): Manifest and decorator reference.
-- [Architecture](https://yeongseon.github.io/azure-functions-durable-graph-python/architecture/): How the graph runtime maps to Durable Functions.
+- [Usage](https://yeongseon.dev/azure-functions-python/durable-graph/usage/): Manifest and decorator reference.
+- [Architecture](https://yeongseon.dev/azure-functions-python/durable-graph/architecture/): How the graph runtime maps to Durable Functions.
 
 ## Examples
-- [Data Pipeline](https://yeongseon.github.io/azure-functions-durable-graph-python/examples/data_pipeline/): ETL-style pipeline.
-- [Content Classifier](https://yeongseon.github.io/azure-functions-durable-graph-python/examples/content_classifier/): Branching workflow.
-- [Support Agent](https://yeongseon.github.io/azure-functions-durable-graph-python/examples/support_agent/): Agentic workflow.
+- [Data Pipeline](https://yeongseon.dev/azure-functions-python/durable-graph/examples/data_pipeline/): ETL-style pipeline.
+- [Content Classifier](https://yeongseon.dev/azure-functions-python/durable-graph/examples/content_classifier/): Branching workflow.
+- [Support Agent](https://yeongseon.dev/azure-functions-python/durable-graph/examples/support_agent/): Agentic workflow.
 
 ## Reference
-- [API Reference](https://yeongseon.github.io/azure-functions-durable-graph-python/api/): Public API surface.
-- [FAQ](https://yeongseon.github.io/azure-functions-durable-graph-python/faq/): Frequently asked questions.
-- [Troubleshooting](https://yeongseon.github.io/azure-functions-durable-graph-python/troubleshooting/): Common issues and fixes.
+- [API Reference](https://yeongseon.dev/azure-functions-python/durable-graph/api/): Public API surface.
+- [FAQ](https://yeongseon.dev/azure-functions-python/durable-graph/faq/): Frequently asked questions.
+- [Troubleshooting](https://yeongseon.dev/azure-functions-python/durable-graph/troubleshooting/): Common issues and fixes.
