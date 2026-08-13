@@ -12,6 +12,8 @@
 
 다른 언어: [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
+> ℹ️ 이 번역은 커뮤니티가 관리하는 참고용 문서로, 최신 [English README](README.md)보다 뒤처질 수 있습니다. 정확한 최신 정보는 영어 원문을 기준으로 하세요.
+
 > **Alpha 알림** — 이 패키지는 초기 개발 단계(`0.1.0a0`)입니다. 릴리스 간 API가 예고 없이 변경될 수 있습니다. 프로덕션 환경에서는 충분한 테스트 후 사용하세요.
 
 **Azure Functions**와 **Durable Functions** 오케스트레이션을 위한 manifest 기반 그래프 런타임입니다.

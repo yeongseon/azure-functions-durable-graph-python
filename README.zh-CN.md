@@ -12,6 +12,8 @@
 
 其他语言: [한국어](README.ko.md) | [日本語](README.ja.md) | [English](README.md)
 
+> ℹ️ 本翻译由社区维护，仅供参考，可能落后于最新的 [English README](README.md)。请以英文版为准。
+
 > **Alpha 版本声明** — 此包处于早期开发阶段（`0.1.0a0`）。API 可能在版本间发生不兼容变更，恕不另行通知。请在生产环境使用前进行充分测试。
 
 面向 **Azure Functions** 和 **Durable Functions** 编排的清单优先（manifest-first）图运行时。
