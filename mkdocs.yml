@@ -1,7 +1,8 @@
 site_name: Azure Functions Durable Graph
 site_description: Manifest-first graph runtime for Azure Functions with Durable Functions orchestration
 site_author: Yeongseon Choe
-repo_url: https://github.com/yeongseon/azure-functions-durable-graph
+site_url: https://yeongseon.dev/azure-functions-python/durable-graph/
+repo_url: https://github.com/yeongseon/azure-functions-durable-graph-python
 edit_uri: edit/main/docs/
 
 theme:

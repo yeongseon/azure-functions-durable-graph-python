@@ -8,7 +8,7 @@
 - Version: 0.1.0
 - Python: >=3.10, <3.15
 - License: MIT
-- Docs: https://yeongseon.github.io/azure-functions-durable-graph-python/
+- Docs: https://yeongseon.dev/azure-functions-python/durable-graph/
 - Repository: https://github.com/yeongseon/azure-functions-durable-graph-python
 
 ## What It Does
@@ -61,7 +61,7 @@ app = runtime.function_app
 
 ## Documentation
 
-- [Project Docs](https://yeongseon.github.io/azure-functions-durable-graph-python/)
+- [Project Docs](https://yeongseon.dev/azure-functions-python/durable-graph/)
 - [Repository README](https://github.com/yeongseon/azure-functions-durable-graph-python)
 - [Examples](https://github.com/yeongseon/azure-functions-durable-graph-python/tree/main/examples)
 
