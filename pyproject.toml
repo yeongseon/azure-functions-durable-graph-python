@@ -23,7 +23,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "azure-functions>=1.17,<3",
+    "azure-functions>=1.17,<2.0.0",
     "azure-functions-durable>=1.2.0,<3",
     "pydantic>=2.0,<3.0",
     "typing-extensions>=4.12",
