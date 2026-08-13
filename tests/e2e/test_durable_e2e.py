@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import os
 import time
+from typing import Any
 
 import pytest
 import requests
@@ -55,7 +56,7 @@ def warmup() -> None:
     raise AssertionError(f"Function App never became healthy: {last_exc}")
 
 
-def _graph_names(health_body: dict) -> set[str]:
+def _graph_names(health_body: dict[str, Any]) -> set[str]:
     names: set[str] = set()
     for g in health_body.get("registered_graphs", []):
         if isinstance(g, dict):
@@ -92,7 +93,7 @@ def test_orchestration_runs_to_completion() -> None:
     # Poll our own public status route (the API contract we certify) until the
     # orchestration reaches a terminal state.
     deadline = time.time() + POLL_TIMEOUT_SECONDS
-    last_body: dict = {}
+    last_body: dict[str, Any] = {}
     while time.time() < deadline:
         r = requests.get(_url(f"/api/runs/{instance_id}"), timeout=30)
         assert r.status_code == 200, r.text
