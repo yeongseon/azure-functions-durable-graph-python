@@ -54,6 +54,7 @@ jobs:
               /^docs\/.+$/,
               /^chore\/.+$/,
               /^ci\/.+$/,
+              /^build\/.+$/,
               /^codex\/.+$/,
               /^main$/
             ];
@@ -69,6 +70,7 @@ jobs:
                 - docs/<description>
                 - chore/<description>
                 - ci/<description>
+                - build/<description>
                 - codex/<description>
                 - main`);
             } else {
