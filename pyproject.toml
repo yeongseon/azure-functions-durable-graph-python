@@ -23,6 +23,11 @@ classifiers = [
 ]
 
 dependencies = [
+    # Cap-lift criteria (see #167/#170): keep <2.0.0 until the advisory
+    # `worker-compat-2x` lane is green on Python 3.13 and 3.14 against real
+    # azure-functions 2.x AND azure-functions-durable, then lift in a separate
+    # PR. azure-functions 2.x requires Python >= 3.13, so the lane runs only on
+    # 3.13+; 3.10-3.12 stay on the 1.x line.
     "azure-functions>=1.17,<2.0.0",
     "azure-functions-durable>=1.2.0,<3",
     "pydantic>=2.0,<3.0",

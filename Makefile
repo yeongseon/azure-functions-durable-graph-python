@@ -101,6 +101,13 @@ test-e2e: ensure-hatch
 	@echo "Running e2e tests..."
 	@$(HATCH) run test -m "e2e"
 
+.PHONY: worker-compat-2x
+worker-compat-2x: bootstrap
+	@echo "azure-functions 2.x requires Python >= 3.13; .venv must use a 3.13+ interpreter (run 'make clean-all' first if it was created on an older Python)."
+	@$(PIP) install -e ".[dev]" > /dev/null
+	@$(PIP) install --no-deps --force-reinstall 'azure-functions>=2,<3'
+	@$(PYTHON) -m pytest -m 'not e2e' -o addopts='' tests -v
+
 .PHONY: cov
 cov: ensure-hatch
 	@$(HATCH) run cov
