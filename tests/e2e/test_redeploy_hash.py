@@ -62,9 +62,9 @@ def test_changed_handler_changes_hash_and_runs_are_fenced() -> None:
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         registry.register(reg_v2)
-    assert any(
-        "re-registered with a new hash" in str(w.message) for w in caught
-    ), "expected a re-registration warning when registering a new hash for 'calc'"
+    assert any("re-registered with a new hash" in str(w.message) for w in caught), (
+        "expected a re-registration warning when registering a new hash for 'calc'"
+    )
 
     # A run pinned to v1's hash uses v1 logic (+1); v2's hash uses v2 logic (+10).
     out_v1 = run_graph(
