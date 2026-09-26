@@ -129,7 +129,6 @@ def test_multi_version_registration() -> None:
     assert reg.registration_by_hash("demo", hash_v2).manifest.version == "2"
 
 
-
 # ---------------------------------------------------------------------------
 # Direct unit tests for the pure helpers ``_merge_state`` and
 # ``_normalize_route_decision``.  These complement the example-driven and
