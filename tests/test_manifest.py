@@ -34,7 +34,6 @@ def test_manifest_hash_is_stable_for_same_topology() -> None:
     assert reg_a.manifest.graph_hash == reg_b.manifest.graph_hash
 
 
-
 # ---------------------------------------------------------------------------
 # Build-time validation: explicit unit assertions on ``ManifestBuilder.build``
 # guard rails and the ``NodeDefinition`` invariants (issue #83).

@@ -240,9 +240,9 @@ def test_operations_shared_error_envelope_not_aliased(
     status = paths["/api/runs/{instance_id}"]["get"]["responses"]
     assert start["404"] is not status["404"]
     # Same schema $ref reused across sites; per-site descriptions differ.
-    assert _resp_ref(
-        paths["/api/graphs/{graph_name}/runs"]["post"], "404"
-    ) == _resp_ref(paths["/api/runs/{instance_id}"]["get"], "404")
+    assert _resp_ref(paths["/api/graphs/{graph_name}/runs"]["post"], "404") == _resp_ref(
+        paths["/api/runs/{instance_id}"]["get"], "404"
+    )
     assert start["404"]["description"] != status["404"]["description"]
 
 

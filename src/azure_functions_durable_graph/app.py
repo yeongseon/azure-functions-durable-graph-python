@@ -56,9 +56,7 @@ class DurableGraphApp:
 
             body = _read_json(req)
             if body is None:
-                return _error_response(
-                    "request body must be valid JSON object", status_code=400
-                )
+                return _error_response("request body must be valid JSON object", status_code=400)
 
             instance_id = body.get("instance_id") or str(uuid.uuid4())
             initial_state = body.get("input") or {}
@@ -232,4 +230,3 @@ def _error_response(
         ErrorEnvelope(error=error, details=details).model_dump(mode="python"),
         status_code=status_code,
     )
-

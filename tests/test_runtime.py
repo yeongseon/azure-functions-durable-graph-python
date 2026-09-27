@@ -107,7 +107,6 @@ class TestOrchestrate:
         assert gen.send({"value": 2}) == "exec-2"
 
 
-
 class TestActivities:
     @pytest.mark.asyncio
     async def test_execute_node(self) -> None:
