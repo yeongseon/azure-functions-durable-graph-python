@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 import hashlib
 import json
-from typing import Any, Awaitable, Callable, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -36,7 +37,7 @@ class NodeDefinition(BaseModel):
     terminal: bool = False
 
     @model_validator(mode="after")
-    def validate_node(self) -> "NodeDefinition":
+    def validate_node(self) -> NodeDefinition:
         if self.terminal and (self.next_node or self.route_handler_name):
             raise ValueError("terminal nodes cannot define next_node or route_handler_name")
         return self
@@ -92,7 +93,7 @@ class ManifestBuilder(Generic[StateModelT]):
         self._route_handlers: dict[str, RouteHandler[StateModelT]] = {}
         self._event_handlers: dict[str, EventHandler[StateModelT]] = {}
 
-    def set_entrypoint(self, node_name: str) -> "ManifestBuilder[StateModelT]":
+    def set_entrypoint(self, node_name: str) -> ManifestBuilder[StateModelT]:
         self.entrypoint = node_name
         return self
 
@@ -104,7 +105,7 @@ class ManifestBuilder(Generic[StateModelT]):
         next_node: str | None = None,
         route: RouteHandler[StateModelT] | None = None,
         terminal: bool = False,
-    ) -> "ManifestBuilder[StateModelT]":
+    ) -> ManifestBuilder[StateModelT]:
         if name in self._nodes:
             raise ValueError(f"duplicate node name '{name}'")
         handler_name = _callable_name(handler)
@@ -137,7 +138,7 @@ class ManifestBuilder(Generic[StateModelT]):
         self,
         event_name: str,
         handler: EventHandler[StateModelT],
-    ) -> "ManifestBuilder[StateModelT]":
+    ) -> ManifestBuilder[StateModelT]:
         if event_name in self._event_handlers:
             raise ValueError(f"duplicate event handler for event '{event_name}'")
         self._event_handlers[event_name] = handler

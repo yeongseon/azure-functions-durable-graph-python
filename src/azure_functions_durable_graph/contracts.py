@@ -22,7 +22,7 @@ class RouteDecision(BaseModel):
     note: str | None = None
 
     @model_validator(mode="after")
-    def _validate_action_fields(self) -> "RouteDecision":
+    def _validate_action_fields(self) -> RouteDecision:
         if self.action == RouteAction.NEXT:
             if not self.next_node:
                 raise ValueError("action 'next' requires next_node")
@@ -43,11 +43,11 @@ class RouteDecision(BaseModel):
         return self
 
     @classmethod
-    def next(cls, node_name: str) -> "RouteDecision":
+    def next(cls, node_name: str) -> RouteDecision:
         return cls(action=RouteAction.NEXT, next_node=node_name)
 
     @classmethod
-    def complete(cls, note: str | None = None) -> "RouteDecision":
+    def complete(cls, note: str | None = None) -> RouteDecision:
         return cls(action=RouteAction.COMPLETE, note=note)
 
     @classmethod
@@ -57,7 +57,7 @@ class RouteDecision(BaseModel):
         event_name: str,
         resume_node: str,
         note: str | None = None,
-    ) -> "RouteDecision":
+    ) -> RouteDecision:
         return cls(
             action=RouteAction.WAIT_FOR_EVENT,
             event_name=event_name,
