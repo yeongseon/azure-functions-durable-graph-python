@@ -10,7 +10,6 @@ This guide covers how to set up a local development environment, run tests, and 
 - **Git**
 - **Hatch** (`pip install hatch`)
 - **Make**
-- **git-cliff** for changelog generation
 
 ---
 
@@ -31,7 +30,8 @@ azure-functions-durable-graph/
 ├── infra/
 ├── .github/
 │   └── workflows/
-├── cliff.toml
+├── release-please-config.json
+├── .release-please-manifest.json
 ├── Makefile
 ├── pyproject.toml
 ├── CHANGELOG.md
@@ -40,7 +40,7 @@ azure-functions-durable-graph/
 
 - **`Makefile`** — common commands for environment setup, testing, linting, releasing, and publishing.
 - **`pyproject.toml`** — Hatch environments, project metadata, and tool configuration.
-- **`cliff.toml`** — git-cliff configuration for changelog generation from conventional commits.
+- **`release-please-config.json`** / **`.release-please-manifest.json`** — Release Please configuration and the tracked version; these drive version bumps, `CHANGELOG.md`, and release tags.
 - **`src/azure_functions_durable_graph/`** — core library code.
 - **`tests/`** — unit and integration tests.
 - **`docs/`** — documentation files served by MkDocs.
@@ -124,11 +124,6 @@ Use these as the **golden commands** for local validation and CI parity. Prefer 
 | `make check` | Run lint + typecheck |
 | `make check-all` | Run lint + typecheck + test |
 | `make build` | Build package |
-| `make changelog` | Regenerate CHANGELOG.md via git-cliff |
-| `make release-patch` | Bump patch version + changelog + tag |
-| `make release-minor` | Bump minor version + changelog + tag |
-| `make release-major` | Bump major version + changelog + tag |
-| `make publish-pypi` | Publish to PyPI |
 | `make publish-test` | Publish to TestPyPI |
 | `make precommit` | Run all pre-commit hooks |
 | `make precommit-install` | Install pre-commit hooks |
