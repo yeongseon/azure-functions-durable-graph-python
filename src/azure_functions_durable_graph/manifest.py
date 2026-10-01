@@ -210,9 +210,9 @@ class ManifestBuilder(Generic[StateModelT]):
         return GraphRegistration(
             manifest=manifest,
             state_model=self.state_model,
-            node_handlers=self._node_handlers,
-            route_handlers=self._route_handlers,
-            event_handlers=self._event_handlers,
+            node_handlers=dict(self._node_handlers),
+            route_handlers=dict(self._route_handlers),
+            event_handlers=dict(self._event_handlers),
         )
 
 
