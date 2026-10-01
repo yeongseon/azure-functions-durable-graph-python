@@ -89,7 +89,7 @@ class GraphRegistry:
         node = registration.manifest.nodes[node_name]
         handler = registration.node_handlers[node.handler_name]
         current_state = registration.state_model.model_validate(state)
-        result = await _maybe_await(handler(current_state))
+        result = await _maybe_await(handler(current_state.model_copy(deep=True)))
         merged = _merge_state(current_state, result, registration.state_model)
         return merged.model_dump(mode="python")
 
@@ -147,7 +147,7 @@ class GraphRegistry:
             raise KeyError(f"unknown event handler '{event_name}'") from exc
 
         current_state = registration.state_model.model_validate(state)
-        result = await _maybe_await(handler(current_state, event_payload))
+        result = await _maybe_await(handler(current_state.model_copy(deep=True), event_payload))
         merged = _merge_state(current_state, result, registration.state_model)
         return merged.model_dump(mode="python")
 

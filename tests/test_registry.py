@@ -78,6 +78,49 @@ async def test_registry_applies_event(registry: tuple[GraphRegistry, str]) -> No
 
 
 @pytest.mark.asyncio
+async def test_execute_node_keeps_state_when_mutating_handler_returns_none() -> None:
+    def mutate(state: DemoState) -> None:
+        state.message = "mutated"
+
+    builder = ManifestBuilder(graph_name="mutation", state_model=DemoState, version="1")
+    builder.set_entrypoint("mutate")
+    builder.add_node("mutate", mutate, terminal=True)
+    registration = builder.build()
+    reg = GraphRegistry()
+    reg.register(registration)
+
+    new_state = await reg.execute_node(
+        "mutation", registration.manifest.graph_hash, "mutate", {"message": "original"}
+    )
+
+    assert new_state["message"] == "original"
+
+
+@pytest.mark.asyncio
+async def test_apply_event_keeps_state_when_mutating_handler_returns_none() -> None:
+    def mutate(state: DemoState, payload: Any) -> None:
+        state.message = str(payload)
+
+    builder = ManifestBuilder(graph_name="mutation", state_model=DemoState, version="1")
+    builder.set_entrypoint("finish")
+    builder.add_node("finish", finish, terminal=True)
+    builder.add_event_handler("mutation", mutate)
+    registration = builder.build()
+    reg = GraphRegistry()
+    reg.register(registration)
+
+    new_state = await reg.apply_event(
+        "mutation",
+        registration.manifest.graph_hash,
+        "mutation",
+        {"message": "original"},
+        "mutated",
+    )
+
+    assert new_state["message"] == "original"
+
+
+@pytest.mark.asyncio
 async def test_registration_by_hash_returns_correct_version(
     registry: tuple[GraphRegistry, str],
 ) -> None:
