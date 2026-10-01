@@ -50,6 +50,22 @@ def test_build_snapshots_nested_metadata() -> None:
     assert registration.manifest.graph_hash == graph_hash
 
 
+def test_build_snapshots_handler_mappings() -> None:
+    builder = ManifestBuilder(graph_name="demo", state_model=DemoState, version="1")
+    builder.set_entrypoint("first")
+    builder.add_node("first", first, terminal=True)
+    registration = builder.build()
+    graph_hash = registration.manifest.graph_hash
+
+    builder.add_node("second", second, route=lambda state: "first")
+    builder.add_event_handler("updated", lambda state, event: None)
+
+    assert registration.node_handlers == {f"{__name__}.first": first}
+    assert registration.route_handlers == {}
+    assert registration.event_handlers == {}
+    assert registration.manifest.graph_hash == graph_hash
+
+
 # ---------------------------------------------------------------------------
 # Build-time validation: explicit unit assertions on ``ManifestBuilder.build``
 # guard rails and the ``NodeDefinition`` invariants (issue #83).
