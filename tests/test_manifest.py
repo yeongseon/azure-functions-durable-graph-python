@@ -34,6 +34,22 @@ def test_manifest_hash_is_stable_for_same_topology() -> None:
     assert reg_a.manifest.graph_hash == reg_b.manifest.graph_hash
 
 
+def test_build_snapshots_nested_metadata() -> None:
+    metadata = {"nested": {"owner": "before"}}
+    builder = ManifestBuilder(
+        graph_name="demo", state_model=DemoState, version="1", metadata=metadata
+    )
+    builder.set_entrypoint("first")
+    builder.add_node("first", first, terminal=True)
+
+    registration = builder.build()
+    graph_hash = registration.manifest.graph_hash
+    metadata["nested"]["owner"] = "after"
+
+    assert registration.manifest.metadata == {"nested": {"owner": "before"}}
+    assert registration.manifest.graph_hash == graph_hash
+
+
 # ---------------------------------------------------------------------------
 # Build-time validation: explicit unit assertions on ``ManifestBuilder.build``
 # guard rails and the ``NodeDefinition`` invariants (issue #83).

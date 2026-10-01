@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
+from copy import deepcopy
 from dataclasses import dataclass, field
 import hashlib
 import json
@@ -179,6 +180,7 @@ class ManifestBuilder(Generic[StateModelT]):
                 f"nodes unreachable from entrypoint '{self.entrypoint}': {sorted(unreachable)}"
             )
 
+        metadata = deepcopy(self.metadata)
         manifest_without_hash = {
             "graph_name": self.graph_name,
             "version": self.version,
@@ -188,7 +190,7 @@ class ManifestBuilder(Generic[StateModelT]):
                 name: node.model_dump(mode="python") for name, node in sorted(self._nodes.items())
             },
             "event_handler_names": sorted(self._event_handlers.keys()),
-            "metadata": self.metadata,
+            "metadata": metadata,
         }
 
         canonical = json.dumps(manifest_without_hash, sort_keys=True, separators=(",", ":"))
@@ -202,7 +204,7 @@ class ManifestBuilder(Generic[StateModelT]):
             entrypoint=self.entrypoint,
             nodes=self._nodes,
             event_handler_names=sorted(self._event_handlers.keys()),
-            metadata=self.metadata,
+            metadata=metadata,
         )
 
         return GraphRegistration(
