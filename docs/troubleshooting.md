@@ -10,7 +10,7 @@ If you are still setting up, read [Installation](installation.md) and
 
 Before deep debugging, confirm:
 
-1. Python 3.11+
+1. Python 3.10+
 2. Pydantic v2 installed
 3. `azure-functions` and `azure-functions-durable` installed
 4. Azure Functions Python v2 decorator model in use

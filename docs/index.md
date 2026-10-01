@@ -89,7 +89,7 @@ app = runtime.function_app
 
 ## Compatibility
 
-- Python 3.11+
+- Python 3.10+
 - Azure Functions Python v2 programming model
 - Azure Durable Functions
 - Pydantic v2
