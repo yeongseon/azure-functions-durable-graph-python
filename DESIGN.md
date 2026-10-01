@@ -72,7 +72,7 @@ executing against the exact version they started with (side-by-side deploys).
 
 ## Compatibility Policy
 
-- Minimum supported Python version: `3.10`
+- Minimum supported Python version: `3.11`
 - Supported runtime target: Azure Functions Python v2 programming model
 - Orchestration provider: `azure-functions-durable`
 - Public APIs follow semantic versioning expectations

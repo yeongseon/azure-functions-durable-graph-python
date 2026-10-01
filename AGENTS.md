@@ -8,7 +8,7 @@
 - Project: `azure-functions-durable-graph`
 - Project type: Python library
 - Runtime scope: Azure Functions Python v2 programming model with Durable Functions orchestration
-- Minimum supported Python: `3.10`
+- Minimum supported Python: `3.11`
 - Packaging: `pyproject.toml` with Hatch
 
 ## Read First
@@ -23,7 +23,7 @@
 - Run `hatch run pytest --cov --cov-report=term-missing -q` to verify before submitting changes.
 - Any PR that drops coverage below 95% must include additional tests to compensate.
 - This package is Alpha (`0.1.0a0`); the coverage floor applies to committed changes and PRs — it prevents PRs from regressing coverage, it does not require existing code to already be at 95%.
-- Runtime code must remain compatible with Python 3.10+.
+- Runtime code must remain compatible with Python 3.11+.
 - Public APIs must be fully typed.
 - The orchestrator must remain deterministic — all user logic runs in Durable Functions activities, never inside the orchestrator.
 - Keep documentation examples, manifest builder behaviour, and tests synchronized.

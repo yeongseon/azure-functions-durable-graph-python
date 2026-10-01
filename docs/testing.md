@@ -6,7 +6,7 @@ This guide describes the test suite for `azure-functions-durable-graph`, includi
 
 The `azure-functions-durable-graph` project maintains a high standard of quality through a comprehensive test suite. The suite ensures that manifest building, state management, routing logic, and registry behavior work correctly across different Python versions.
 
-- **Supported Environments**: Python 3.10, 3.11, 3.12, 3.13, and 3.14
+- **Supported Environments**: Python 3.11, 3.12, 3.13, and 3.14
 
 The test suite covers unit tests for individual modules and public API surface verification.
 
@@ -100,7 +100,7 @@ You can view the coverage configuration under the `[tool.coverage.run]` and `[to
 The test suite runs automatically on every pull request and push to the main branch. The CI matrix ensures compatibility across:
 
 - **OS**: `ubuntu-latest`
-- **Python Versions**: 3.10, 3.11, 3.12, 3.13, 3.14
+- **Python Versions**: 3.11, 3.12, 3.13, 3.14
 
 This is managed via the `.github/workflows/ci-test.yml` configuration.
 
