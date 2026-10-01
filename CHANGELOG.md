@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.0](https://github.com/yeongseon/azure-functions-durable-graph-python/compare/v0.2.0...v0.3.0) (2026-10-01)
+
+
+### Bug Fixes
+
+* **ci:** align canonical azure/login pin with the bumped v3.1.0 SHA ([#187](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/187)) ([6d78cfe](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/6d78cfe5d599dc091a95f38ce6268a36276e836c))
+* **ci:** correct release wording and stale.yml inputs ([#193](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/193)) ([13cadad](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/13cadadcec9240f2188121ebf0dd5a0f85262aa8)), closes [#192](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/192)
+* **ci:** stop the changed-file format gate failing open ([#190](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/190)) ([68904e6](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/68904e62f7a60ed4dff7e6f8ac36617ca8b8c9ab))
+* **compat:** deprecate Python 3.10 ahead of its removal ([#214](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/214)) ([c71f91c](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/c71f91ce3df482a6bdcd595e22805d2d07afc4c2))
+* **deps:** drop unsupported semver cooldown keys for github-actions ecosystem ([#174](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/174)) ([9403b0a](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/9403b0aa248c12bae0b88907c72ccd20a7434c6e))
+* **manifest:** snapshot handler mappings when building registrations ([#217](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/217)) ([7781d1d](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/7781d1d2b39a65c3fa57e51109ffb1e642a0ad15))
+* **manifest:** snapshot metadata at build time ([#216](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/216)) ([afc4f20](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/afc4f20115805406918b579fd5579a064bccaaf0))
+* **runtime:** keep state unchanged when a handler mutates it and returns None ([#215](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/215)) ([f1bf07c](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/f1bf07c40dd0bb3c17a6c5c7f5f74e5eb72a0ad2))
+* **templates:** use Conventional Commit prefixes in issue forms ([#195](https://github.com/yeongseon/azure-functions-durable-graph-python/issues/195)) ([000d6bf](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/000d6bf379646bc78df2ca306924340d9326a1dc))
+
+
+### Miscellaneous Tasks
+
+* release 0.3.0 ([75572ef](https://github.com/yeongseon/azure-functions-durable-graph-python/commit/75572ef4301ad72de4639a3e2e45e1b754625625))
+
+## Changelog
+
 All notable changes to this project will be documented in this file.
 
 ### Diagram
