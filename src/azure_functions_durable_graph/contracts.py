@@ -8,10 +8,7 @@ from pydantic import BaseModel, Field, model_validator
 JsonDict = dict[str, Any]
 
 
-# Not enum.StrEnum: this is a public contract type with no __str__ override,
-# so switching would change str(RouteAction.NEXT) from "RouteAction.NEXT" to
-# "next". That is a deliberate API decision, not part of dropping Python 3.10.
-class RouteAction(str, Enum):  # noqa: UP042
+class RouteAction(str, Enum):
     NEXT = "next"
     COMPLETE = "complete"
     WAIT_FOR_EVENT = "wait_for_event"

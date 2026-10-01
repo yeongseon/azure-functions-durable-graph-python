@@ -4,7 +4,7 @@
 
 ## Requirements
 
-- Python 3.11+
+- Python 3.10+
 - `azure-functions`
 - `azure-functions-durable`
 - Azure Functions Python **v2** (`func.FunctionApp` with decorators)
@@ -15,7 +15,7 @@
 
 | Component | Supported Range | Notes |
 | --- | --- | --- |
-| Python | 3.11+ | Project metadata currently declares `>=3.11,<3.15`. |
+| Python | 3.10+ | Project metadata currently declares `>=3.10,<3.15`. |
 | Pydantic | v2 (`>=2.0,<3.0`) | State models should inherit from `pydantic.BaseModel`. |
 | `azure-functions` | Required | Use with Python v2 decorator-based `FunctionApp`. |
 | `azure-functions-durable` | Required | Provides Durable Functions orchestration primitives. |
