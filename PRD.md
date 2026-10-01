@@ -114,7 +114,7 @@ endpoints, and versioned topologies.
 
 ## Compatibility
 
-- Python: `>=3.10, <3.15`
+- Python: `>=3.11, <3.15`
 - Runtime: Azure Functions Python v2 programming model
 - Orchestration: `azure-functions-durable`
 - State models: Pydantic v2
