@@ -23,7 +23,8 @@ Copilot or other AI review is a mandatory stage.
 Required **GitHub CI** at the final head is authoritative, including
 the applicable functional/compatibility checks; local `make check-all`
 is encouraged but not a separate merge gate. CI runner hosting is not
-specified. Review the code, tests, replay/recovery safety, security,
+specified. If required CI is missing or pending, leave the PR unmerged;
+local tests and AI review do not substitute for those checks. Review the code, tests, replay/recovery safety, security,
 documentation and issue scope. AI findings are advisory, not approval.
 The responsible maintainer confirms required results and findings
 before merging, with independent assessment of permission, secrets,
