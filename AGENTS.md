@@ -20,7 +20,7 @@
 
 ### Test Coverage
 - Maintain test coverage at **95% or above** for committed changes and PRs.
-- Run `hatch run pytest --cov --cov-report=term-missing -q` to verify before submitting changes.
+- For optional local verification, run `hatch run pytest --cov --cov-report=term-missing -q`; required GitHub CI remains authoritative.
 - Any PR that drops coverage below 95% must include additional tests to compensate.
 - This package is Alpha (`0.1.0a0`); the coverage floor applies to committed changes and PRs — it prevents PRs from regressing coverage, it does not require existing code to already be at 95%.
 - Runtime code must remain compatible with Python 3.10+.
@@ -37,6 +37,26 @@
 - Pin every external GitHub Action `uses:` reference in `.github/workflows/` to a full commit SHA with a `# vX.Y.Z` comment.
 - Only local composite actions (`uses: ./...`) and the PyPA publish action (`pypa/gh-action-pypi-publish`) may skip SHA pinning; document any exception with an inline comment at the call site.
 - Dependabot updates SHA-pinned references on the configured schedule and opens PRs when new versions are available.
+
+## Unified PR Review and Merge Policy
+
+Use identical review and merge criteria for all contributors, whether
+human-only, OpenCode, Codex, Claude Code, ChatGPT, Copilot or another
+agent. There is no AI tool-specific mandatory review stage.
+
+1. Implement a focused, issue-linked change with relevant tests and docs.
+2. Treat required **GitHub CI** checks at the final PR head as the
+   authoritative automated results. Local runs are recommended, not
+   another merge gate; runner hosting is not assumed. Preserve
+   coverage, security, orchestration/replay, Azure integration and
+   release/publishing validations.
+3. Review correctness, idempotence, state transitions, recovery,
+   maintainability, tests and security. AI reviewers such as Oracle,
+   Copilot or `agent-review` are optional and **advisory only**.
+4. Address blocking findings, verify required CI and have the
+   responsible maintainer make the final merge decision. Permissions,
+   publishing and security-sensitive orchestration paths need explicit
+   independent scrutiny.
 
 ## PR Workflow
 
