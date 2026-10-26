@@ -1,6 +1,18 @@
 # Contributing Guide
 
-We welcome contributions to the `azure-functions-durable-graph` project.
+## Retirement rule
+
+**Retired and unsupported as of 2026-10-02.** There is no maintenance or security
+update commitment. `yeongseon` never published an official PyPI release; tags and
+GitHub releases are historical source snapshots. See the [README](README.md).
+
+Documentation corrections do not authorize feature work, dependency maintenance,
+release recovery, credential renewal, publishing (including TestPyPI), or re-enabling
+automation. Revival requires an explicit maintainer decision and a dependency/Actions
+update and re-audit before workflows are re-enabled, as recorded in
+[PR #209](https://github.com/yeongseon/azure-functions-durable-graph-python/pull/209#issuecomment-5944447065).
+The retained development and release guidance below is historical. Use its local
+checks to validate documentation corrections, not to resume product development.
 
 ## Branch Strategy
 
@@ -166,7 +178,7 @@ Pull requests are squash-merged and the pull request title becomes the final com
 
 Issue titles are not enforced. Anyone can open an issue without knowing this convention; maintainers adjust the title during triage.
 
-## Releases
+## Releases (historical; not authorized)
 
 Merging to `main` does not publish a release.
 
