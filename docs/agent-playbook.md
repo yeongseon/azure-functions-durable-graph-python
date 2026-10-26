@@ -1,5 +1,20 @@
 # Agent Playbook
 
+## Retirement rule
+
+**Retired and unsupported as of 2026-10-02.** No maintenance or security updates
+will be provided. `yeongseon` never published an official PyPI release; history,
+tags and GitHub releases are source snapshots only.
+
+The retirement rule in `AGENTS.md` overrides the historical workflow below and
+all linked development/release guides. Documentation cleanup does not authorize
+feature work, dependency maintenance, release recovery, credential renewal,
+publishing (including TestPyPI), or re-enabling automation. Revival requires an
+explicit maintainer decision and updated, re-audited dependencies and Actions
+before workflows are re-enabled, as recorded in
+[PR #209](https://github.com/yeongseon/azure-functions-durable-graph-python/pull/209#issuecomment-5944447065).
+Local checks may validate documentation corrections without reviving the project.
+
 ## Source Of Truth
 - `AGENTS.md` for repository-wide engineering and agent rules.
 - `README.md` for installation, quick start, and CLI examples.
