@@ -1,5 +1,13 @@
 # Contributing Guide
 
+> **Historical guide.** Retired and unsupported as of **2026-10-02**, with no
+> maintenance or security updates and no official PyPI release by `yeongseon`.
+> Documentation corrections do not authorize feature or dependency work, release
+> recovery, credential renewal, publishing or re-enabling automation. The
+> [retirement rule](https://github.com/yeongseon/azure-functions-durable-graph-python/blob/main/CONTRIBUTING.md#retirement-rule)
+> overrides the historical instructions below. Revival requires an explicit
+> maintainer decision and a dependency/Actions re-audit before re-enabling workflows.
+
 We welcome contributions to the `azure-functions-durable-graph` project. This guide outlines the process for contributing code, documentation, and tests while maintaining the high quality standards of the project.
 
 ## Getting Started

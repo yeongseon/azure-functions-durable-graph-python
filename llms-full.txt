@@ -1,11 +1,14 @@
 # azure-functions-durable-graph — Full LLM Reference
 
-> Manifest-first graph runtime for Azure Functions with Durable Functions orchestration.
+> Retired and unsupported as of 2026-10-02. No maintenance, fixes or security updates.
+> `yeongseon` never published an official PyPI release of `azure-functions-durable-graph`.
+> Do not treat a same-named PyPI project as official. Tags and GitHub releases are
+> historical source snapshots. All API descriptions and examples below are historical.
 
 ## Package Info
 
-- PyPI: `pip install azure-functions-durable-graph`
-- Version: 0.1.0
+- Installation/upgrade: no official maintainer PyPI release; not recommended for new use.
+- Supported versions: none.
 - Python: >=3.10, <3.15
 - License: MIT
 - Docs: https://yeongseon.dev/azure-functions-python/durable-graph/
@@ -14,9 +17,11 @@
 
 ## Installation
 
-```bash
-pip install azure-functions-durable-graph
-```
+No official maintainer package is available to install or upgrade. Source snapshots
+are retained for historical inspection only. Documentation cleanup does not authorize
+release recovery, credential renewal, dependency maintenance, feature work or publishing.
+Revival requires an explicit maintainer decision and a dependency/Actions update and
+re-audit before workflows are re-enabled (PR #209).
 
 ## Public API
 

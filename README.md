@@ -26,7 +26,8 @@
 
 Read this in: [한국어](README.ko.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
 
-> **Alpha Notice** — This package is in early development (`0.1.0a0`). APIs may change without notice between releases. Do not use in production without thorough testing.
+The descriptions and examples below are historical reference only, not a current
+installation, support or release recommendation. The retirement notice above overrides them.
 
 Manifest-first graph runtime for **Azure Functions** with **Durable Functions** orchestration.
 
@@ -35,7 +36,9 @@ Manifest-first graph runtime for **Azure Functions** with **Durable Functions** 
 Part of the **Azure Functions Python DX Toolkit**
 → Bring FastAPI-like developer experience to Azure Functions
 
-> **Python 3.10 is deprecated.** Support ends in the next minor release — Python 3.10 reaches end of life in October 2026. Importing the package on Python 3.10 emits a `FutureWarning`; upgrade to Python 3.11 or newer.
+> **Historical compatibility note:** the source emits a `FutureWarning` on Python
+> 3.10. Retirement supersedes the former plan for a future compatibility release;
+> there are no supported versions.
 
 ## Why this exists
 
@@ -71,25 +74,10 @@ This package is independent of LangGraph and has no dependency on it. The name w
 
 ## Installation
 
-```bash
-pip install azure-functions-durable-graph
-```
-
-Your Azure Functions app should also include:
-
-```text
-azure-functions
-azure-functions-durable
-azure-functions-durable-graph
-```
-
-For local development:
-
-```bash
-git clone https://github.com/yeongseon/azure-functions-durable-graph-python.git
-cd azure-functions-durable-graph
-pip install -e .[dev]
-```
+There is no official maintainer PyPI release to install or upgrade. Do not treat
+a same-named PyPI project as an official release. See the
+[historical source inspection guide](docs/installation.md) for local documentation
+validation; no production installation is recommended.
 
 ## Quick Start
 

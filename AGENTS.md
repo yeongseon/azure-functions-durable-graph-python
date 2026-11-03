@@ -1,5 +1,21 @@
 # AGENTS.md
 
+## Retirement rule (overrides historical guidance below)
+
+Retired and unsupported as of **2026-10-02**. This project receives no maintenance,
+fixes or security updates. `yeongseon` never published an official PyPI release of
+`azure-functions-durable-graph`; tags and GitHub releases are historical source
+snapshots, not supported packages. See the [README retirement notice](README.md).
+
+Documentation corrections do **not** authorize feature work, dependency maintenance,
+release recovery, credential renewal, publishing (including TestPyPI), or re-enabling
+release/Azure/dependency automation. Revival requires an explicit maintainer decision
+and updated, re-audited dependencies and Actions **before** workflows are re-enabled,
+as recorded in [PR #209](https://github.com/yeongseon/azure-functions-durable-graph-python/pull/209#issuecomment-5944447065).
+Retained engineering and release procedures below are historical, not instructions to
+resume maintenance. Local validation of documentation changes remains appropriate;
+required PR checks and conversation resolution still govern merges.
+
 ## Purpose
 `azure-functions-durable-graph` provides a manifest-first graph runtime for Azure Functions Python v2 applications using Durable Functions orchestration.
 
@@ -102,7 +118,7 @@ This repository is **issue-based, not milestone-based**. Track and group work us
 - `make typecheck`
 - `make build`
 
-## Release Process
+## Release Process (historical; not authorized)
 
 Three tools, one job each. Nothing else participates.
 

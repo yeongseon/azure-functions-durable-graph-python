@@ -1,6 +1,23 @@
 # Release Process
 
-This document describes how a new version of **azure-functions-durable-graph** reaches PyPI.
+> **Retired and unsupported as of 2026-10-02.** No maintenance or security updates
+> will be provided. `yeongseon` never published an official PyPI release of
+> `azure-functions-durable-graph`. Tags and GitHub releases are historical source snapshots.
+
+## Historical design only — do not execute
+
+Everything below describes the former release design, **not a current publication
+or recovery procedure**. Release, publishing, Azure E2E and dependency auto-merge
+workflows are disabled. Do not renew credentials, retry publishing, run emergency
+version/tag/push steps, or publish to TestPyPI because of this document.
+Documentation cleanup does not authorize those actions. Revival requires an explicit
+maintainer decision and updated, re-audited dependencies and Actions before workflows
+are re-enabled; see
+[PR #209](https://github.com/yeongseon/azure-functions-durable-graph-python/pull/209#issuecomment-5944447065).
+The retained commands and tables are historical reference only, not proof that an
+official package was ever published. Do not hand-edit versions, manifests, changelogs or tags.
+
+The former design described how a new version would reach PyPI:
 
 Releases are automated by [Release Please](https://github.com/googleapis/release-please). It decides the
 version, writes the changelog, and cuts the tag. It does **not** publish — publication is a separate,
@@ -128,7 +145,7 @@ for the version, changelog, or tags — or push an ungated artifact to PyPI.
 
 ---
 
-## Still-current Makefile commands
+## Historical Makefile commands (not publication authorization)
 
 | Task | Command |
 |------|---------|

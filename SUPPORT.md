@@ -1,46 +1,24 @@
 # Support Policy
 
-## Supported Environment
+**Retired and unsupported as of 2026-10-02.** This project receives no maintenance,
+fixes or security updates. `yeongseon` never published an official PyPI release of
+`azure-functions-durable-graph`. Tags and GitHub releases are historical source snapshots.
 
-* Python: 3.10 and above
-* Runtime: Azure Functions (Python)
+## Support scope
 
-## Support Scope
+There are no supported releases or supported runtime environments. The historical
+Python and Azure compatibility declarations are not current support commitments.
+There is no commitment to answer usage questions, fix bugs, implement features,
+issue deprecation notices or ship further releases. Former response targets and
+weekly updates no longer apply.
 
-This project is maintained by a single developer and support is provided on a
-best-effort basis.
+Documentation corrections may clarify the retained history; they do not revive
+product development or dependency maintenance. See the retirement rule in
+[CONTRIBUTING.md](CONTRIBUTING.md#retirement-rule).
 
-Supported requests:
+## Private security contact
 
-* Bug reports with clear reproduction steps
-* Feature requests aligned with the project scope
-* Usage questions related to the package itself
-
-Out of scope:
-
-* Custom feature development
-* Environment-specific debugging
-* General Azure infrastructure consulting
-
-## Support Channels
-
-Preferred channels:
-
-* GitHub Issues for bugs and feature requests
-* GitHub Discussions for usage questions
-* GitHub Security Advisories for security reports
-
-Response targets:
-
-* Initial response: within 3 business days on a best-effort basis
-* Follow-up updates: weekly for active issues when applicable
-
-## Deprecation Policy
-
-* Deprecated behavior will be documented before removal
-* Deprecations are announced at least one minor release in advance
-* Removals happen in a later release when practical
-
-## Security Issues
-
-Report security issues privately when possible. See `SECURITY.md` for details.
+A voluntary private contact channel remains for information about the historical
+source, without any response, triage, remediation or disclosure-timing commitment.
+See [SECURITY.md](SECURITY.md). Do not wait for a promised fix or coordinated release:
+there is no such promise for this retired project.
