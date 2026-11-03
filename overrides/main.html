@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<aside role="note" aria-label="Project retirement" class="admonition warning">
+  <p class="admonition-title">Retired and unsupported as of 2026-10-02</p>
+  <p>No maintenance, fixes or security updates will be provided.
+    <code>yeongseon</code> never published an official PyPI release of
+    <code>azure-functions-durable-graph</code>; do not treat a same-named PyPI
+    project as official. History, tags and GitHub releases are source snapshots only.</p>
+  <p>All guides, API descriptions, examples and release procedures on this site
+    are historical reference, not current installation, deployment, support or
+    publishing recommendations. Documentation corrections do not authorize revival.</p>
+</aside>
+{{ super() }}
+{% endblock %}

@@ -1,5 +1,12 @@
 # Development Guide
 
+> **Historical guide.** Retired and unsupported as of **2026-10-02**, with no
+> maintenance or security updates and no official PyPI release by `yeongseon`.
+> Use local checks for documentation corrections only. The retirement rule in
+> [CONTRIBUTING.md](https://github.com/yeongseon/azure-functions-durable-graph-python/blob/main/CONTRIBUTING.md#retirement-rule)
+> overrides feature, dependency and publishing instructions below, including TestPyPI.
+> Revival requires an explicit maintainer decision and a dependency/Actions re-audit.
+
 This guide covers how to set up a local development environment, run tests, and manage code quality for **azure-functions-durable-graph**, using Hatch and a Makefile for workflow automation.
 
 ---

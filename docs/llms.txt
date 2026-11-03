@@ -1,11 +1,17 @@
 # Azure Functions Durable Graph
 
-> Manifest-first graph runtime for Azure Functions with Durable Functions orchestration.
+> Retired and unsupported as of 2026-10-02. No maintenance, fixes or security updates.
+> `yeongseon` never published an official PyPI release of `azure-functions-durable-graph`.
+> Do not treat a same-named PyPI project as official. Tags and GitHub releases are
+> historical source snapshots. All linked guides and examples are historical.
 
-Part of the **Azure Functions Python DX Toolkit**. Define workflows as a declarative graph manifest and run them on Azure Durable Functions — get orchestration, fan-out/fan-in, and retries without hand-writing orchestrator code. Install with `pip install azure-functions-durable-graph` (once published).
+Former experimental manifest-first runtime for Azure Durable Functions. There is
+no current or planned official package installation. Documentation corrections do
+not revive maintenance or authorize publishing; revival requires an explicit
+maintainer decision and a dependency/Actions re-audit before re-enabling workflows.
 
 ## Getting Started
-- [Installation](https://yeongseon.dev/azure-functions-python/durable-graph/installation/): Install the package.
+- [Installation](https://yeongseon.dev/azure-functions-python/durable-graph/installation/): Retirement status and historical source inspection.
 - [Quickstart](https://yeongseon.dev/azure-functions-python/durable-graph/getting-started/): Minimal end-to-end example.
 - [Configuration](https://yeongseon.dev/azure-functions-python/durable-graph/configuration/): Configure the runtime.
 
